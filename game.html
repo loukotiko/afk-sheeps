@@ -1,0 +1,1382 @@
+<!doctype html>
+<html>
+	<head>
+		<link href="https://fonts.googleapis.com/css?family=Lilita+One" rel="stylesheet">
+		<style>
+			/**
+			 z-indexes :
+			 	6 PLAYER
+			 	5 BORDERS
+			 	4 POSTS
+			 	3 PLAYER (WHEN WALKING)
+			 	2 FLAGS
+			 	1 PATHS
+				0 BACKGROUND
+			 **/
+
+			:root {
+				--width: 1920px;
+				--height: 1080px;
+
+				--cell-size: 100px;
+				--grid-size: 7;
+				--top: 0;
+				--left: 0;
+				--right: calc(var(--cell-size));
+				--bottom: calc(var(--cell-size));
+
+				--border-h: url(border-h.png);
+				--border-v: url(border-v.png);
+				--post: url(post.png);
+				--hole: url(hole.png);
+			}
+
+			body {
+				background: #000;
+				overflow: hidden;
+				font-family: 'Lilita One', cursive;
+			}
+
+			background {
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background: url(background.png) no-repeat center center;
+				background-size: var(--width) var(--height);
+				pointer-events: none;
+				z-index: 0;
+			}
+
+			maze posts {
+				display: block;
+				width: calc(var(--cell-size) * (var(--grid-size) + 1));
+				height: calc(var(--cell-size) * (var(--grid-size) + 1));
+				padding-left: calc(var(--cell-size) / 2);
+				padding-top: calc(var(--cell-size) / 2);
+				background-image: var(--post);
+				background-repeat: repeat;
+				box-sizing: border-box;
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				z-index: 4;
+			}
+
+			maze {
+				position: absolute;
+				display: block;
+				width: calc(var(--cell-size) * var(--grid-size));
+				height: calc(var(--cell-size) * var(--grid-size));
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+			}
+
+			maze cell {
+				display: block;
+				position: absolute;
+				width: var(--cell-size);
+				height: var(--cell-size);
+				border: 0;
+				border-radius: 0;
+			}
+
+			maze player, maze flag {
+				display: block;
+				position: absolute;
+				width: var(--cell-size);
+				height: var(--cell-size);
+				box-sizing: border-box;
+				border-radius: 0%;
+				text-align: center;
+			}
+
+			maze flag {
+				z-index: 2;
+			}
+
+			maze player name {
+			    color: var(--player-color);
+			    text-shadow: 2px 2px 0 var(--contrast-color),
+			    			 2px -2px 0 var(--contrast-color),
+			    			 -2px 2px 0 var(--contrast-color),
+			    			 -2px -2px 0 var(--contrast-color),
+			    			 0 -2px 0 var(--contrast-color),
+			    			 0 2px 0 var(--contrast-color);
+				display: inline-block;
+			    font-size: 22px;
+			    line-height: 22px;
+			    height: 22px;
+				z-index: 1;
+    			position: absolute;
+    			top: 0;
+			    left: 50%;
+    			margin-left: -250px;
+    			width: 500px;
+    			opacity: 1;
+    			transition: opacity .2s;
+			}
+
+			maze player name:empty {
+				display: none;
+			}
+
+			maze player sheep {
+				content: '';
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: var(--cell-size);
+				height: var(--cell-size);
+
+				background-image: url(sheep.png);
+				background-repeat: no-repeat;
+				background-size: cover;
+			}
+
+			maze player.jump sheep {
+				background-image: url(sheep-j.png);
+			}
+
+			maze player sheep::after {
+				content: '';
+			    width: 10px;
+			    height: 10px;
+			    display: block;
+			    border-radius: 100%;
+			    position: absolute;
+			    top: 29px;
+			    left: 29px;
+			    background: var(--player-color);
+			    box-shadow: -6px 3px 0 -1px var(--player-color),
+			    			7px 1px 0px var(--player-color),
+			    			9px 6px 0px var(--player-color),
+			    			3px 9px 0px -1px var(--player-color),
+			    			-4px 8px 0px var(--player-color),
+			    			2px 4px 0px 3px var(--player-color);
+			    transition: background .4s, box-shadow .4s;
+			}
+
+			maze player shadow {
+			    position: absolute;
+			    bottom: 21px;
+			    height: 10%;
+			    left: 29px;
+			    right: 26px;
+			    background: #000;
+			    filter: blur(4px);
+			    opacity: .5;
+			    border-radius: 100%;
+			}
+
+			maze player.jump shadow {
+				animation: jumpshadow .5s linear;
+			}
+
+			@keyframes jumpshadow {
+				0% {
+					transform: translateY(0);
+				}
+				50% {
+					transform: translateY(40px);
+			    	filter: blur(8px);
+			   		opacity: .3;
+				}
+				100% {
+					transform: translateY(0);
+				}
+			}
+
+	/** JUMP **/
+
+			maze player.jump.right {
+				animation: jumph .5s linear;
+				transform: scaleX(var(--h-dir)) translate(-100%, 0);
+			}
+
+			maze player.jump.left {
+				animation: jumph .5s linear;
+				transform: scaleX(var(--h-dir)) translate(-100%, 0);
+			}
+
+			@keyframes jumph {
+				0% {
+					transform: scaleX(var(--h-dir));
+				}
+				33% {
+					transform: scaleX(var(--h-dir)) translate(-33%, -35%);
+				}
+				50% {
+					transform: scaleX(var(--h-dir)) translate(-50%, -40%);
+				}
+				66% {
+					transform: scaleX(var(--h-dir)) translate(-66%, -35%);
+				}
+				100% {
+					transform: scaleX(var(--h-dir)) translate(-100%, 0);
+				}
+			}
+
+			maze player.jump.up {
+				animation: jumpup .5s linear;
+				transform: scaleX(var(--h-dir)) translate(0, -100%);
+			}
+
+			@keyframes jumpup {
+				0% {
+					transform: scaleX(var(--h-dir));
+				}
+				60% {
+					transform: scaleX(var(--h-dir)) translate(0, -110%);
+				}
+				100% {
+					transform: scaleX(var(--h-dir)) translate(0, -100%);
+				}
+			}
+
+			maze player.jump.down {
+				animation: jumpdown .5s linear;
+				transform: scaleX(var(--h-dir)) translate(0, 100%);
+			}
+
+			@keyframes jumpdown {
+				0% {
+					transform: scaleX(var(--h-dir));
+				}
+				33% {
+					transform: scaleX(var(--h-dir)) translate(0, -10%);
+				}
+				100% {
+					transform: scaleX(var(--h-dir)) translate(0, 100%);
+				}
+			}
+
+			maze player {
+				--h-dir: 1;
+				z-index: 6;
+				transform: scaleX(var(--h-dir));
+				--not-falling: 1;
+			}
+
+			maze player.walk {
+				transition: top var(--distance-y) linear, left var(--distance-x) var(--distance-y) linear;
+				animation: walk .1s infinite alternate;
+				z-index: 3;
+			}
+
+			maze player.walk name {
+				opacity: 0;
+			}
+
+			@keyframes walk {
+				0% {
+					transform: scaleX(var(--h-dir)) translateY(0%);
+				}
+				100% {
+					transform: scaleX(var(--h-dir)) translateY(7%);
+				}
+			}
+
+			maze player.face-right {
+				--h-dir: -1;
+			}
+
+			maze player.face-right name {
+				transform: scaleX(-1);
+			}
+
+	/** FALL **/
+			maze flag[class*="hole-"] {
+				background: var(--hole) no-repeat;
+			}
+
+			maze player.fall, maze player.unfall {
+				border-radius: 0 0 100% 100%;
+			    border: 22px solid transparent;
+			    border-top: 0;
+			    overflow: hidden;
+			    pointer-events: none;
+				--not-falling: 0;
+			}
+
+			maze player.fall sheep {
+				animation: fall .3s linear;
+			    left: -22px;
+				top: 100%;
+				transform: scale(.7);
+			}
+
+			maze player:not(.camo).fall name, maze player:not(.camo).unfall name {
+				opacity: 0;
+			}
+
+			@keyframes fall {
+				0% {
+					top: 0;
+					transform: scale(1);
+				}
+				100% {
+					top: 100%;
+					transform: scale(.7);
+				}
+			}
+
+			maze player.unfall sheep {
+				left: -22px;
+				animation: unfall .5s ease-out;
+			}
+
+			@keyframes unfall {
+				0% {
+					top: 100%;
+					transform: scale(.7);
+				}
+
+				80% {
+					top: -30%;
+				}
+
+				100% {
+					top: 0;
+					transform: scale(1);
+				}
+			}
+
+	/** GROW **/
+
+			maze flag.grow {
+				background: url(grow.png) no-repeat;
+			}
+
+			maze player.grow sheep {
+				animation: grow .5s;
+				transform-origin: 50% 50%;
+				transform: scale(2) translateY(-15px);
+			}
+
+			maze player.grow name {
+				animation: growname .5s;
+				top: -70px;
+				font-size: 34px;
+			}
+
+			maze player.grow shadow {
+				animation: growshadow .5s;
+				transform-origin: 50% 50%;
+				transform: scale(2) translateY(-3px);
+			}
+
+			@keyframes grow {
+				0% {
+					transform: scale(1) translateY(0);
+				}
+				100% {
+					transform: scale(2) translateY(-15px);
+				}
+			}
+
+			@keyframes growname {
+				0% {
+					top: 0;
+					font-size: 22px;
+				}
+				100% {
+					top: -70px;
+					font-size: 34px;
+				}
+			}
+
+			@keyframes growshadow {
+				0% {
+					transform: scale(1) translateY(0);
+				}
+				100% {
+					transform: scale(2) translateY(-3px);
+				}
+			}
+
+			maze player.ungrow sheep {
+				animation: ungrow .5s ease-in;
+				transform-origin: 50% 50%;
+				transform: scale(1) translateY(0);
+			}
+
+			maze player.ungrow name {
+				animation: ungrowname .5s ease-in;
+				top: 0;
+				font-size: 22px;
+			}
+
+			@keyframes ungrow {
+				0% {
+					transform: scale(2) translateY(-15px);
+				}
+				50% {
+					transform: scale(1) translateY(-30px);
+				}
+				100% {
+					transform: scale(1) translateY(0);
+				}
+			}
+
+			@keyframes ungrowname {
+				0% {
+					top: -70px;
+					font-size: 34px;
+				}
+				100% {
+					top: 0;
+					font-size: 22px;
+				}
+			}
+
+
+
+
+
+			maze cell {
+				--border-h: url(border-h.png);
+				--border-v: url(border-v.png);
+				--angle: url(angle.png);
+			}
+
+			maze cell paths, maze cell borders {
+				content: '';
+				display: block;
+				position: absolute;
+				top: 0;
+				left: 0;
+				bottom: 0;
+				right: 0;
+			}
+
+			maze cell paths {
+				background: var(--path-ltrb);
+				transform: translateY(13px);
+				z-index: 1;
+				background-color: #89a846 !important;
+				transition: background .5s;
+			}
+
+			maze cell borders {
+				z-index: 5;
+				top: -50px;
+				left: -50px;
+				right: -50px;
+				bottom: -50px;
+			}
+
+			maze cell:not(.external) borders {
+				animation: celldown 1s;
+			}
+
+			@keyframes celldown {
+				0% {
+					opacity: 0;
+					transform: translateY(-20%);
+				}
+				100% {
+					opacity: 1;
+					transform: translateY(0);
+				}
+			}
+
+			maze cell.allow-left borders {
+				background:
+						var(--border-v) no-repeat var(--left) var(--top)
+						;
+			}
+
+			maze cell.allow-right borders {
+				background:
+						var(--border-v) no-repeat var(--right) var(--top)
+						;
+			}
+
+			maze cell.allow-top borders {
+				background:
+						var(--border-h) no-repeat var(--left) var(--top)
+						;
+			}
+
+			maze cell.allow-bottom borders {
+				background:
+						var(--border-h) no-repeat var(--left) var(--bottom)
+						;
+			}
+
+			maze cell.allow-left.allow-bottom borders {
+				background:
+						var(--border-h) no-repeat var(--left) var(--bottom),
+						var(--border-v) no-repeat var(--left) var(--top)
+						;
+			}
+
+			maze cell.allow-left.allow-right borders {
+				background:
+						var(--border-v) no-repeat var(--left) var(--top),
+						var(--border-v) no-repeat var(--right) var(--top)
+						;
+			}
+
+			maze cell.allow-left.allow-top borders {
+				background:
+						var(--border-v) no-repeat var(--left) var(--top),
+						var(--border-h) no-repeat var(--left) var(--top)
+						;
+			}
+
+			maze cell.allow-right.allow-bottom borders {
+				background:
+						var(--border-h) no-repeat var(--left) var(--bottom),
+						var(--border-v) no-repeat var(--right) var(--top)
+						;
+			}
+
+			maze cell.allow-right.allow-top borders {
+				background:
+						var(--border-v) no-repeat var(--right) var(--top),
+						var(--border-h) no-repeat var(--left) var(--top)
+						;
+			}
+
+			maze cell.allow-top.allow-bottom borders {
+				background:
+						var(--border-h) no-repeat var(--left) var(--top),
+						var(--border-h) no-repeat var(--left) var(--bottom)
+						;
+			}
+
+			maze cell.allow-left.allow-right.allow-top borders {
+				background:
+						var(--border-v) no-repeat var(--right) var(--top),
+						var(--border-v) no-repeat var(--left) var(--top),
+						var(--border-h) no-repeat var(--left) var(--top)
+						;
+			}
+
+			maze cell.allow-left.allow-top.allow-bottom borders {
+				background:
+						var(--border-h) no-repeat var(--left) var(--bottom),
+						var(--border-v) no-repeat var(--left) var(--top),
+						var(--border-h) no-repeat var(--left) var(--top)
+						;
+			}
+
+			maze cell.allow-right.allow-top.allow-bottom borders {
+				background:
+						var(--border-h) no-repeat var(--left) var(--bottom),
+						var(--border-v) no-repeat var(--right) var(--top),
+						var(--border-h) no-repeat var(--left) var(--top)
+						;
+			}
+
+			maze cell.allow-left.allow-right.allow-bottom borders {
+				background:
+						var(--border-h) no-repeat var(--left) var(--bottom),
+						var(--border-v) no-repeat var(--left) var(--top),
+						var(--border-v) no-repeat var(--right) var(--top)
+						;
+			}
+
+			maze cell.allow-left.allow-right.allow-top.allow-bottom borders {
+				background:
+						var(--border-h) no-repeat var(--left) var(--bottom),
+						var(--border-v) no-repeat var(--left) var(--top),
+						var(--border-v) no-repeat var(--right) var(--top),
+						var(--border-h) no-repeat var(--left) var(--top)
+						;
+			}
+
+			maze cell paths {
+				--path-l: url(path-l.png);
+				--path-r: url(path-r.png);
+				--path-t: url(path-t.png);
+				--path-b: url(path-b.png);
+
+				--path-lr: url(path-lr.png);
+				--path-tb: url(path-tb.png);
+
+				--path-lt: url(path-lt.png);
+				--path-tr: url(path-tr.png);
+				--path-rb: url(path-rb.png);
+				--path-lb: url(path-lb.png);
+
+				--path-ltr: url(path-ltr.png);
+				--path-trb: url(path-trb.png);
+				--path-lrb: url(path-lrb.png);
+				--path-ltb: url(path-ltb.png);
+
+				--path-ltrb: url(path-ltrb.png);
+			}
+
+			maze cell.external paths {
+				--path-lt: url(path-lt-x.png);
+				--path-tr: url(path-tr-x.png);
+				--path-rb: url(path-rb-x.png);
+				--path-lb: url(path-lb-x.png);
+
+				--path-ltr: url(path-ltr-x.png);
+				--path-trb: url(path-trb-x.png);
+				--path-lrb: url(path-lrb-x.png);
+				--path-ltb: url(path-ltb-x.png);
+			}
+
+			/* paths */
+			maze cell.allow-left paths {
+				background: var(--path-trb);
+			}
+
+			maze cell.allow-right paths {
+				background: var(--path-ltb);
+			}
+
+			maze cell.allow-top paths {
+				background: var(--path-lrb);
+			}
+
+			maze cell.allow-bottom paths {
+				background: var(--path-ltr);
+			}
+
+			maze cell.allow-left.allow-bottom paths {
+				background: var(--path-tr);
+			}
+
+			maze cell.allow-left.allow-right paths {
+				background: var(--path-tb);
+			}
+
+			maze cell.allow-left.allow-top paths {
+				background: var(--path-rb);
+			}
+
+			maze cell.allow-right.allow-bottom paths {
+				background: var(--path-lt);
+			}
+
+			maze cell.allow-right.allow-top paths {
+				background: var(--path-lb);
+			}
+
+			maze cell.allow-top.allow-bottom paths {
+				background: var(--path-lr);
+			}
+
+			maze cell.allow-left.allow-right.allow-top paths {
+				background: var(--path-b);
+			}
+
+			maze cell.allow-left.allow-top.allow-bottom paths {
+				background: var(--path-r);
+			}
+
+			maze cell.allow-right.allow-top.allow-bottom paths {
+				background: var(--path-l);
+			}
+
+			maze cell.allow-left.allow-right.allow-bottom paths {
+				background: var(--path-t);
+			}
+
+			maze cell.allow-left.allow-right.allow-top.allow-bottom paths {
+				background: transparent;
+			}
+
+			found {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%) scale(0.5);
+				font-size: 60px;
+				color: #fff;
+				background: rgba(0, 0, 0, .2);
+				border-radius: 60px;
+				animation: fadeinout 3s;
+				opacity: 0;
+				white-space: nowrap;
+			}
+
+			@keyframes fadeinout {
+				0% {
+					transform: translate(-50%, -50%) scale(0.5);
+					opacity: 0;
+				}
+				18% {
+					transform: translate(-50%, -50%) scale(1.1);
+				}
+				21% {
+					transform: translate(-50%, -50%) scale(1);
+					opacity: 1;
+				}
+				80% {
+					transform: translate(-50%, -50%) scale(1);
+					opacity: 1;
+				}
+				100% {
+					transform: translate(-50%, -50%) scale(0.5);
+					opacity: 0;
+				}
+			}
+
+			found name {
+			    color: var(--player-color);
+			    text-shadow: 2px 2px 0 var(--contrast-color),
+			    			 2px -2px 0 var(--contrast-color),
+			    			 -2px 2px 0 var(--contrast-color),
+			    			 -2px -2px 0 var(--contrast-color),
+			    			 0 -2px 0 var(--contrast-color),
+			    			 0 2px 0 var(--contrast-color);				
+			}
+		</style>
+	</head>
+	<body>
+		<maze>
+			<posts></posts>
+		</maze>
+		<background></background>
+		<script>
+			// Pour trouver les ids, regarder les requêtes envoyées depuis twitch (requete http)
+			let loukodilChannelId = '144500698';
+			let moutonRoomId = 'e35e5eb8-21ca-4d16-8c69-ab65fdf157bc';
+
+			let selectedPlayer;
+
+			let random = (n, m) => Math.floor(Math.random()*((m&&(m-n+1))||n))+((m&&n)||0);
+
+			/*tags:
+				@badges: badgeinactif/0,badgeactif/1
+				color: #rrvvbb
+				display-name: UsErNaMe
+				emotes:
+				mod: 1/0
+				subscriber: 1/0
+				turbo: 1/0
+			*/
+			let parseMessage = function parseMessage(rawMessage) {
+			    var parsedMessage = {
+			        message: null,
+			        tags: null,
+			        command: null,
+			        original: rawMessage,
+			        channel: null,
+			        username: null
+			    };
+
+			    if(rawMessage[0] === '@'){
+			        var tagIndex = rawMessage.indexOf(' '),
+			        userIndex = rawMessage.indexOf(' ', tagIndex + 1),
+			        commandIndex = rawMessage.indexOf(' ', userIndex + 1),
+			        channelIndex = rawMessage.indexOf(' ', commandIndex + 1),
+			        messageIndex = rawMessage.indexOf(':', channelIndex + 1);
+
+			        let rawTags = rawMessage.slice(0, tagIndex);
+			        parsedMessage.tags = rawTags.split(';').reduce((tags, rawTag) => {
+			        	let [key, value] = rawTag.split('=');
+			        	tags[key] = value;
+			        	return tags;
+			        }, {});
+
+			        parsedMessage.username = rawMessage.slice(tagIndex + 2, rawMessage.indexOf('!'));
+			        parsedMessage.command = rawMessage.slice(userIndex + 1, commandIndex);
+			        parsedMessage.channel = rawMessage.slice(commandIndex + 1, channelIndex);
+			        parsedMessage.message = rawMessage.slice(messageIndex + 1);
+			    } else if(rawMessage.startsWith("PING")) {
+			        parsedMessage.command = "PING";
+			        parsedMessage.message = rawMessage.split(":")[1];
+			    }
+
+			    return parsedMessage;
+			}
+
+			let animations = [];
+
+			let after = (time, cb) => animations.push(setTimeout(cb, time));
+			let clearAllAnimations = _ => animations.forEach(animation => clearTimeout(animation));
+
+			let idealTextColor = function(bgColor) {
+			   var {R, G, B} = getRGBComponents(bgColor);
+			   var bgDelta = R * .299 + G * .587 + B * .114;
+
+			   return 255 - bgDelta < 105 ? "#000000" : "#ffffff";   
+			}
+
+			let getRGBComponents = function(color) {
+			    var R = parseInt(color.substring(1, 3), 16);
+			    var G = parseInt(color.substring(3, 5), 16);
+			    var B = parseInt(color.substring(5, 7), 16);
+			    return { R, G, B };
+			}
+
+			let r = _ => Math.round(Math.random());
+
+			let createMaze = (mazeElement = document.querySelector('maze'), options) => {
+				options = Object.assign({size:7, cellSize:100}, options);
+
+				let randomPosition = _ => [random(options.size), random(options.size)];
+				let centerPosition = [(options.size-1)/2,(options.size-1)/2];
+
+				let maze = [];	// contains all maze
+				let moves = [];	// contains moves to create maze
+				let nbOfHoles = 0;
+				mazeElement.querySelectorAll('cell, flag, player').forEach(flag => mazeElement.removeChild(flag));
+
+				let placeExternalCells = _ => {
+					let directions = ['allow-left', 'allow-top', 'allow-right', 'allow-bottom', 'allow-left'];
+					let directionIndex = 0;
+					let shiftCell = 0;
+					let x = -1, y = -1;
+
+					Array.from(Array((options.size + 1) * 4)).forEach((_, i) => {
+						let externalCell = document.createElement('cell');
+						externalCell.appendChild(document.createElement('paths'));
+						externalCell.classList.add('external');
+						externalCell.classList.add(directions[directionIndex]);
+
+						if(directionIndex == 4) {
+							y -= 1;
+						} else if(directionIndex == 1) {
+							x += 1;
+						} else if(directionIndex == 2) {
+							y += 1;
+						} else if(directionIndex == 3) {
+							x -= 1;
+						}
+
+						externalCell.style.left = (x * options.cellSize) + 'px';
+						externalCell.style.top = (y * options.cellSize) + 'px';
+
+						if(!(i % (options.size+1))) {
+							directionIndex++;
+							shiftCell = 0;
+							externalCell.classList.add(directions[directionIndex]);
+						} else {
+							shiftCell++;
+						}
+
+						mazeElement.appendChild(externalCell);
+					});
+				};
+
+				let setCell = cell => {
+					maze = maze || []
+					maze[cell.y] = maze[cell.y] || [];
+					cell = Object.assign(maze[cell.y][cell.x] || {}, cell);
+					cell.maze = currentMaze;
+
+					if(!cell.element)  {
+						cell.element = document.createElement('cell');
+						cell.element.setAttribute('x', cell.x);
+						cell.element.setAttribute('y', cell.y);
+						cell.element.style.left = (cell.x * options.cellSize) + 'px';
+						cell.element.style.top = (cell.y * options.cellSize) + 'px';
+
+						cell.element.appendChild(document.createElement('paths'));
+						cell.element.appendChild(document.createElement('borders'));
+						mazeElement.appendChild(cell.element);
+					}
+					if(cell.allowTop) cell.element.classList.add('allow-top');
+					if(cell.allowBottom) cell.element.classList.add('allow-bottom');
+					if(cell.allowLeft) cell.element.classList.add('allow-left');
+					if(cell.allowRight) cell.element.classList.add('allow-right');
+
+					maze[cell.y][cell.x] = cell;
+				};
+
+				let existsCell = (x, y) => {
+					return maze && maze[y] && maze[y][x] && maze[y][x].maze == currentMaze;
+				};
+
+				let createNextCell = ({x,y}) => {
+					if(moves.length) {
+	                    var possibleDirections = [];
+
+	                    // Go North
+	                    if(y > 0 && !existsCell(x, y-1)) possibleDirections.push("N");
+	                    // Go South
+	                    if(y < (options.size -1) && !existsCell(x, y+1)) possibleDirections.push("S");
+	                    // Go West
+	                    if(x > 0 && !existsCell(x-1, y)) possibleDirections.push("W");
+	                    // Go East
+	                    if(x < (options.size -1) && !existsCell(x+1, y)) possibleDirections.push("E");
+
+	                    if(possibleDirections.length) {
+	                        var move = random(possibleDirections.length);
+	                        let nextCell;
+
+	                        switch (possibleDirections[move]) {
+	                            case "S": 
+	                              	setCell({x, y, allowBottom: true});
+	                              	y += 1;
+	                              	nextCell = {x, y, allowTop: true};
+	                     		break;
+	                            case "N": 
+	                              	setCell({x, y, allowTop: true});
+	                              	y -= 1;
+	                              	nextCell = {x, y, allowBottom: true};
+	                     		break;
+	                            case "W": 
+	                              	setCell({x, y, allowLeft: true});
+	                              	x -= 1;
+	                              	nextCell = {x, y, allowRight: true};
+	                     		break;
+	                            case "E": 
+	                              	setCell({x, y, allowRight: true});
+	                              	x += 1;
+	                              	nextCell = {x, y, allowLeft: true};
+	                     		break;
+	                        }   
+                          	setCell(nextCell);
+                          	moves.push(nextCell);
+	                    } else {
+	                        let move = moves.pop();
+	                        x = move.x, y = move.y;
+	                    }
+
+	                    createNextCell({x,y});
+					}
+				}
+
+				let currentMaze = 0;
+				let initMaze = _ => {
+					moves = [];
+
+					maze.forEach(line => line.forEach(cell => {
+						cell.allowLeft = cell.allowTop = cell.allowRight = cell.allowBottom = false
+						setCell(cell);
+					}));
+
+					currentMaze++;
+
+					let [x, y] = randomPosition();	// or [0,0]
+					let firstCell = {x, y};
+					setCell(firstCell);
+					moves.push(firstCell);
+					// create
+					createNextCell(firstCell);
+				}
+
+				let flags = {};
+				let addFlag = (name, position) => {
+					position = position || randomPosition();
+					let flag = document.createElement('flag');
+					flag.className = name;
+					flag.style.left = (position[0] * options.cellSize) + 'px';
+					flag.style.top = (position[1] * options.cellSize) + 'px';
+					flags[name] = { element: flag, position };
+					mazeElement.appendChild(flag);					
+				}
+
+				let placeFlags = _ => {
+					nbOfHoles = random(2, 5);
+
+					mazeElement.querySelectorAll('flag').forEach(flag => mazeElement.removeChild(flag));
+
+					Array.from(Array(nbOfHoles)).forEach((_,i) => addFlag('hole-' + i));
+					addFlag('grow');
+				}
+
+				placeExternalCells();
+				initMaze();
+				placeFlags();
+
+
+				let createPlayer = infos => {
+
+					let player = {...infos};
+					player.color = player.originalColor = player.tags.color;
+
+					if(!player.color && !player.npc) player.color = player.originalColor = '#' + Math.round(0xffffff * Math.random()).toString(16).padStart(6, 0);
+
+					player.element = document.createElement('player');
+
+					let nameTag = document.createElement('name');
+					nameTag.innerText = player.tags['display-name'];
+					player.element.appendChild(nameTag);
+
+					player.element.appendChild(document.createElement('shadow'));
+					player.element.appendChild(document.createElement('sheep'));
+
+					mazeElement.appendChild(player.element);
+
+					if(player.npc) {
+						player.animating = false;
+						player.x = centerPosition[0];
+						player.y = centerPosition[1];
+						updatePlayer(player);
+					} else {
+						let playerPosition = randomPosition();
+						let fromPosition = [...playerPosition];
+						let direction;
+
+						if(r()) {
+							player.element.style.setProperty('--distance-x', '1s');
+							player.element.style.setProperty('--distance-y', '0s');
+							if(r()) {
+								direction = 'from-left';
+								playerPosition[0] = 0
+								fromPosition[0] = -2;
+								player.element.classList.add('face-right');
+							} else {
+								direction = 'from-right';
+								playerPosition[0] = options.size-1;
+								fromPosition[0] = options.size+1;
+							}
+						} else {
+							player.element.style.setProperty('--distance-x', '0s');
+							player.element.style.setProperty('--distance-y', '1s');
+							if(r()) {
+								direction = 'from-top';
+								playerPosition[1] = 0
+								fromPosition[1] = -2;
+							} else {
+								direction = 'from-bottom';
+								playerPosition[1] = options.size-1;
+								fromPosition[1] = options.size+1;
+							}
+						}
+						
+						player.x = fromPosition[0];
+						player.y = fromPosition[1];
+						updatePlayer(player);
+
+						player.animating = true;
+						player.element.classList.add(direction);
+						player.element.classList.add('walk');
+
+						after(1, _ => {
+							player.x = playerPosition[0];
+							player.y = playerPosition[1];
+							updatePlayer(player);
+						});
+
+						after(1000, _ => {
+							player.animating = false;
+							player.element.classList.remove(direction);
+							player.element.classList.remove('walk');
+						});
+					}
+
+					player.element.addEventListener('click', _ => {
+						if(selectedPlayer) {
+							selectedPlayer.color = selectedPlayer.originalColor;
+							updatePlayer(selectedPlayer);
+						}
+
+						if(selectedPlayer != player) {
+							selectedPlayer = player;
+							selectedPlayer.color = 'pink';
+							updatePlayer(selectedPlayer);
+						} else {
+							selectedPlayer = null;
+						}
+					});
+					return player;
+				}
+
+				let updatePlayer = player => {
+					player.element.style.left = (player.x * options.cellSize) + 'px';
+					player.element.style.top = (player.y * options.cellSize) + 'px';
+					updatePlayerColor(player);
+				};
+
+				let updatePlayerColor = player => {
+					player.element.style.setProperty('--player-color', player.color);
+					player.element.style.setProperty('--contrast-color', idealTextColor(player.color));
+				};
+
+				let playerOn = (player, name) => {
+					return player.x == flags[name].position[0] && player.y == flags[name].position[1];
+				}
+
+				let jump = (player, direction) => {
+					if(player.animating) return;
+
+					player.animating = true;
+
+					player.element.classList.remove('left');
+					player.element.classList.remove('right');
+					player.element.classList.remove('up');
+					player.element.classList.remove('down');
+					player.element.classList.add(direction);
+
+					if(direction == 'left') {
+						player.element.classList.remove('face-right');
+						player.element.classList.add('face-left');
+					}
+					if(direction == 'right') {
+						player.element.classList.remove('face-left');
+						player.element.classList.add('face-right');
+					} 
+
+					if(direction == 'left') player.x -= 1;
+					if(direction == 'right') player.x += 1;
+					if(direction == 'up') player.y -= 1;
+					if(direction == 'down') player.y += 1;
+
+					player.element.classList.add('jump');
+
+					/* wait animation */
+					after(500, _ => stopJump(player, direction))
+				};
+
+				let stopJump = (player, direction) => {
+					player.element.classList.remove('jump');
+					updatePlayer(player);
+
+					if(checkPosition(player)) player.animating = false;
+				};
+
+				let ended = false;
+				let endGame = player => {
+					ended = true;
+					// Afficher le texte
+					let foundElement = document.createElement('found');
+					foundElement.style.setProperty('--player-color', player.color);
+					foundElement.style.setProperty('--contrast-color', idealTextColor(player.color));
+					foundElement.innerHTML = '<name>' + (player.tags['display-name'] || 'Un mouton') + '</name> a trouvé le mouton avec la cloche !';
+					document.body.appendChild(foundElement);
+
+					after(3000, _ => {
+						document.body.removeChild(foundElement);
+					});
+
+					// Retirer les barrières
+					mazeElement.querySelectorAll('cell:not(.external)').forEach(flag => flag.className = '');
+					Object.values(players).forEach(player => player.animating = false);
+					after(1000, _ => {
+						clearAllAnimations();
+						let maxTime = 0;
+
+						// Replacer les moutons et les joueurs
+						Object.values(players).forEach(pl => {
+							pl.element.classList.add('walk');
+
+							if(pl.grown) {
+								pl.grown = false;
+								pl.element.classList.remove('grow');
+								pl.element.classList.add('ungrow');
+
+								after(500, _ => {
+									pl.element.classList.remove('ungrow');
+								});
+							} else {
+								pl.element.classList.remove('grow');
+								pl.element.classList.remove('ungrow');
+							}
+
+							pl.element.classList.remove('fall');
+							pl.element.classList.remove('unfall');
+							pl.element.classList.remove('face-right');
+							pl.element.classList.remove('face-left');
+
+							if(selectedPlayer != pl) pl.color = pl.originalColor;
+
+							let backToPosition;
+							if(pl.npc) {
+								backToPosition = centerPosition;
+							} else {
+								backToPosition = randomPosition();
+								if(r()) {
+									if(r()) {
+										backToPosition[0] = 0
+									} else {
+										backToPosition[0] = options.size-1;
+									}
+								} else {
+									if(r()) {
+										backToPosition[1] = 0
+									} else {
+										backToPosition[1] = options.size-1;
+									}
+								}
+							}
+
+							let distanceX = Math.abs(pl.x - backToPosition[0]);
+							let distanceY = Math.abs(pl.y - backToPosition[1]);
+
+							if(pl.x < backToPosition[0]) pl.element.classList.add('face-right');
+							else pl.element.classList.add('face-left');
+
+							pl.element.style.setProperty('--distance-x', distanceX + 's');
+							pl.element.style.setProperty('--distance-y', distanceY + 's');
+							pl.x = backToPosition[0];
+							pl.y = backToPosition[1];
+
+							updatePlayer(pl);
+
+							let time = (distanceX + distanceY) * 1000;
+							maxTime = Math.max(maxTime, time);
+							after(time, _ => pl.element.classList.remove('walk'));
+						});
+
+						after(Math.max(1000, maxTime), _ => {
+							// Remettre les barrières
+							initMaze();
+
+							after(1000, _ => {
+								ended = false;
+							});
+						});
+					});
+				};
+
+				let checkPosition = player => {
+
+					if(!player.npc || player == selectedPlayer) {
+						// A player jumps on a sheep
+						Object.values(players).filter(player => player.npc).forEach(npc => {
+							if(player.x == npc.x && player.y == npc.y) {
+								if(npc.end) {
+									endGame(player);
+								} else {
+									npc.color = player.color;
+									updatePlayerColor(npc);
+								}
+							}
+						});
+					} else if(!player.end) {
+						// A sheep jumps on a player
+						Object.values(players).filter(player => !player.npc).forEach(pc => {
+							if(player.x == pc.x && player.y == pc.y) {
+								player.color = pc.color;
+								updatePlayerColor(player);
+							}
+						});
+					}
+
+					let playerOnHole = Array.from(Array(nbOfHoles)).map((_,i)=>i).find(i => playerOn(player, 'hole-'+i));
+					if(playerOnHole !== undefined && !player.grown) {
+						player.element.classList.add('fall');
+
+						let randomHoleFlag = flags['hole-' + random(nbOfHoles)];
+						let playerHoleFlag = flags['hole-' + playerOnHole];
+
+						let distanceBetweenHoles = Math.abs(playerHoleFlag.position[0] - randomHoleFlag.position[0])
+												 + Math.abs(playerHoleFlag.position[1] - randomHoleFlag.position[1]);
+
+						after(distanceBetweenHoles * 500, _ => {
+							player.x = randomHoleFlag.position[0];
+							player.y = randomHoleFlag.position[1];
+
+							updatePlayer(player);
+
+							player.element.classList.remove('fall');
+							player.element.classList.add('unfall');
+
+							after(500, _ => {
+								player.element.classList.remove('unfall');
+								player.animating = false;
+							});
+						});
+
+						return false;
+					} 
+
+					if(playerOn(player, 'grow')) {
+						if(player.grown) {
+							player.grown = false;
+							player.element.classList.remove('grow');
+							player.element.classList.add('ungrow');
+
+							after(500, _ => {
+								player.element.classList.remove('ungrow');
+							});
+						} else {
+							player.grown = true;
+							player.element.classList.remove('ungrow');
+							player.element.classList.add('grow');
+						}
+
+						after(500, _ => player.animating = false);
+
+						return false;
+					} 
+
+					return true;
+				};
+
+				let goDirection = (player, direction) => {
+					if(!player.animating && !ended) {
+						let currentCell = maze[player.y][player.x];
+
+						if(currentCell.allowLeft && direction == LEFT) jump(player, 'left');
+
+						if(currentCell.allowRight && direction == RIGHT) jump(player, 'right');
+
+						if(currentCell.allowTop && direction == UP) jump(player, 'up');
+
+						if(currentCell.allowBottom && direction == DOWN) jump(player, 'down');
+					}
+				}
+
+				let players = {};
+
+				// MANUAL
+				const LEFT = 37, UP = 38, RIGHT = 39, DOWN = 40;
+				window.addEventListener('keydown', event => selectedPlayer && goDirection(selectedPlayer, event.keyCode));
+
+				// TWITCH
+			    let webSocket = new WebSocket('wss://irc-ws.chat.twitch.tv:443/', 'irc');
+
+			    webSocket.onerror = message => console.log('Erreur: ', message);
+
+				webSocket.onopen = _ => {
+				    if (webSocket !== null && webSocket.readyState === 1) {
+				        webSocket.send('CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership');
+				        webSocket.send('PASS oauth:w70psoh341bmcl9j559ov27gw8j523');
+				        webSocket.send('NICK loukodil');
+				        webSocket.send('JOIN #chatrooms:' + loukodilChannelId + ':' + moutonRoomId);
+				    }
+				};
+
+			    webSocket.onmessage = message => {
+				    if(message != null) {
+				        var parsed = parseMessage(message.data);
+				        if(parsed != null) {
+				            if(parsed.command === "PRIVMSG") {
+
+				            	let msg = parsed.message.split(/\s/)[0].toLowerCase()[0];
+
+								if(!players[parsed.username]) {
+									if(['j', 'jouer'].indexOf(msg) != -1) {
+										let player = createPlayer(parsed);
+										players[parsed.username] = player;
+									}
+								} else {
+					            	if(['d', 'm', '6'].indexOf(msg) != -1) goDirection(players[parsed.username], RIGHT);
+					            	else if(['q', 'k', '4'].indexOf(msg) != -1) goDirection(players[parsed.username], LEFT);
+					            	else if(['z', 'o', '8'].indexOf(msg) != -1) goDirection(players[parsed.username], UP);
+					            	else if(['s', 'l', '5'].indexOf(msg) != -1) goDirection(players[parsed.username], DOWN);
+					            }
+
+				        		webSocket.send('PRIVMSG test');
+
+					        } else if(parsed.command === "PING") {
+				                webSocket.send("PONG :" + parsed.message);
+				            }
+				        }
+				    }
+			    };
+
+			    Array.from(Array(5)).forEach((_, i) => {
+					let player = createPlayer({npc: true, end: i==0, tags: {'color': '#fffecc', 'display-name': ''}});
+					updatePlayer(player);
+					players[i] = player;
+					setInterval(_ => {
+						if(player != selectedPlayer) {
+							goDirection(player, random(37,  40));
+						}
+					}, random(2000, 10000));
+			    });
+
+			};
+
+			createMaze();
+
+		</script>
+	</body>
+</html>
