@@ -1,0 +1,54 @@
+maze flag[class*="hole-"] {
+	background: var(--hole-image) no-repeat;
+}
+
+maze player.fall, maze player.unfall {
+	border-radius: 0 0 100% 100%;
+    border: 22px solid transparent;
+    border-top: 0;
+    overflow: hidden;
+    pointer-events: none;
+	--not-falling: 0;
+}
+
+maze player.fall name, maze player.unfall name {
+	opacity: 0;
+}
+
+maze player.fall sheep {
+	animation: fall .3s linear;
+    left: -22px;
+	top: 100%;
+	transform: scale(.7);
+}
+
+maze player.unfall sheep {
+	left: -22px;
+	animation: unfall .5s ease-out;
+}
+
+@keyframes fall {
+	0% {
+		top: 0;
+		transform: scale(1);
+	}
+	100% {
+		top: 100%;
+		transform: scale(.7);
+	}
+}
+@keyframes unfall {
+	0% {
+		top: 100%;
+		transform: scale(.7);
+	}
+
+	80% {
+		top: -30%;
+	}
+
+	100% {
+		top: 0;
+		transform: scale(1);
+	}
+}

@@ -1,0 +1,51 @@
+:root {
+	--width: 1920px;
+	--height: 1080px;
+
+	--cell-size: 100px;
+	--grid-size: 7;
+
+	/** Layer orders **/
+	--z-player: 6;
+	--z-borders: 5;
+	--z-posts: 4;
+	--z-player-walking: 3;
+	--z-flags: 2;
+	--z-paths: 1;
+	--z-background: 0;
+}
+
+maze {
+	position: absolute;
+	display: block;
+	width: calc(var(--cell-size) * var(--grid-size));
+	height: calc(var(--cell-size) * var(--grid-size));
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+maze cell {
+	display: block;
+	position: absolute;
+	width: var(--cell-size);
+	height: var(--cell-size);
+	border: 0;
+	border-radius: 0;
+}
+
+maze posts {
+	display: block;
+	width: calc(var(--cell-size) * (var(--grid-size) + 1));
+	height: calc(var(--cell-size) * (var(--grid-size) + 1));
+	padding-left: calc(var(--cell-size) / 2);
+	padding-top: calc(var(--cell-size) / 2);
+	background-image: var(--post-image);
+	background-repeat: repeat;
+	box-sizing: border-box;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: var(--z-posts);
+}

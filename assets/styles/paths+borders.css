@@ -1,0 +1,216 @@
+:root {
+
+	--top: 0;
+	--left: 0;
+	--right: calc(var(--cell-size));
+	--bottom: calc(var(--cell-size));
+}
+
+maze cell paths, maze cell borders {
+	content: '';
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+}
+
+maze cell paths {
+	background: var(--path-ltrb);
+	transform: translateY(13px);
+	z-index: 1;
+	background-color: #89a846 !important;
+	transition: background .5s;
+}
+
+maze cell borders {
+	z-index: 5;
+	top: -50px;
+	left: -50px;
+	right: -50px;
+	bottom: -50px;
+}
+
+maze cell:not(.external) borders {
+	animation: celldown 1s;
+}
+
+@keyframes celldown {
+	0% {
+		opacity: 0;
+		transform: translateY(-20%);
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+maze cell.allow-left borders {
+	background:
+			var(--border-v-image) no-repeat var(--left) var(--top)
+			;
+}
+
+maze cell.allow-right borders {
+	background:
+			var(--border-v-image) no-repeat var(--right) var(--top)
+			;
+}
+
+maze cell.allow-top borders {
+	background:
+			var(--border-h-image) no-repeat var(--left) var(--top)
+			;
+}
+
+maze cell.allow-bottom borders {
+	background:
+			var(--border-h-image) no-repeat var(--left) var(--bottom)
+			;
+}
+
+maze cell.allow-left.allow-bottom borders {
+	background:
+			var(--border-h-image) no-repeat var(--left) var(--bottom),
+			var(--border-v-image) no-repeat var(--left) var(--top)
+			;
+}
+
+maze cell.allow-left.allow-right borders {
+	background:
+			var(--border-v-image) no-repeat var(--left) var(--top),
+			var(--border-v-image) no-repeat var(--right) var(--top)
+			;
+}
+
+maze cell.allow-left.allow-top borders {
+	background:
+			var(--border-v-image) no-repeat var(--left) var(--top),
+			var(--border-h-image) no-repeat var(--left) var(--top)
+			;
+}
+
+maze cell.allow-right.allow-bottom borders {
+	background:
+			var(--border-h-image) no-repeat var(--left) var(--bottom),
+			var(--border-v-image) no-repeat var(--right) var(--top)
+			;
+}
+
+maze cell.allow-right.allow-top borders {
+	background:
+			var(--border-v-image) no-repeat var(--right) var(--top),
+			var(--border-h-image) no-repeat var(--left) var(--top)
+			;
+}
+
+maze cell.allow-top.allow-bottom borders {
+	background:
+			var(--border-h-image) no-repeat var(--left) var(--top),
+			var(--border-h-image) no-repeat var(--left) var(--bottom)
+			;
+}
+
+maze cell.allow-left.allow-right.allow-top borders {
+	background:
+			var(--border-v-image) no-repeat var(--right) var(--top),
+			var(--border-v-image) no-repeat var(--left) var(--top),
+			var(--border-h-image) no-repeat var(--left) var(--top)
+			;
+}
+
+maze cell.allow-left.allow-top.allow-bottom borders {
+	background:
+			var(--border-h-image) no-repeat var(--left) var(--bottom),
+			var(--border-v-image) no-repeat var(--left) var(--top),
+			var(--border-h-image) no-repeat var(--left) var(--top)
+			;
+}
+
+maze cell.allow-right.allow-top.allow-bottom borders {
+	background:
+			var(--border-h-image) no-repeat var(--left) var(--bottom),
+			var(--border-v-image) no-repeat var(--right) var(--top),
+			var(--border-h-image) no-repeat var(--left) var(--top)
+			;
+}
+
+maze cell.allow-left.allow-right.allow-bottom borders {
+	background:
+			var(--border-h-image) no-repeat var(--left) var(--bottom),
+			var(--border-v-image) no-repeat var(--left) var(--top),
+			var(--border-v-image) no-repeat var(--right) var(--top)
+			;
+}
+
+maze cell.allow-left.allow-right.allow-top.allow-bottom borders {
+	background:
+			var(--border-h-image) no-repeat var(--left) var(--bottom),
+			var(--border-v-image) no-repeat var(--left) var(--top),
+			var(--border-v-image) no-repeat var(--right) var(--top),
+			var(--border-h-image) no-repeat var(--left) var(--top)
+			;
+}
+
+/* paths */
+maze cell.allow-left paths {
+	background: var(--path-trb);
+}
+
+maze cell.allow-right paths {
+	background: var(--path-ltb);
+}
+
+maze cell.allow-top paths {
+	background: var(--path-lrb);
+}
+
+maze cell.allow-bottom paths {
+	background: var(--path-ltr);
+}
+
+maze cell.allow-left.allow-bottom paths {
+	background: var(--path-tr);
+}
+
+maze cell.allow-left.allow-right paths {
+	background: var(--path-tb);
+}
+
+maze cell.allow-left.allow-top paths {
+	background: var(--path-rb);
+}
+
+maze cell.allow-right.allow-bottom paths {
+	background: var(--path-lt);
+}
+
+maze cell.allow-right.allow-top paths {
+	background: var(--path-lb);
+}
+
+maze cell.allow-top.allow-bottom paths {
+	background: var(--path-lr);
+}
+
+maze cell.allow-left.allow-right.allow-top paths {
+	background: var(--path-b);
+}
+
+maze cell.allow-left.allow-top.allow-bottom paths {
+	background: var(--path-r);
+}
+
+maze cell.allow-right.allow-top.allow-bottom paths {
+	background: var(--path-l);
+}
+
+maze cell.allow-left.allow-right.allow-bottom paths {
+	background: var(--path-t);
+}
+
+maze cell.allow-left.allow-right.allow-top.allow-bottom paths {
+	background: transparent;
+}

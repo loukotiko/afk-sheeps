@@ -1,0 +1,85 @@
+maze flag.grow {
+	background: var(--grow-flag-image) no-repeat;
+}
+
+maze player.grow sheep {
+	animation: grow .5s;
+	transform-origin: 50% 50%;
+	transform: scale(2) translateY(-15px);
+}
+
+maze player.grow name {
+	animation: growname .5s;
+	top: -70px;
+	font-size: 34px;
+}
+
+maze player.grow shadow {
+	animation: growshadow .5s;
+	transform-origin: 50% 50%;
+	transform: scale(2) translateY(-3px);
+}
+
+maze player.ungrow sheep {
+	animation: ungrow .5s ease-in;
+	transform-origin: 50% 50%;
+	transform: scale(1) translateY(0);
+}
+
+maze player.ungrow name {
+	animation: ungrowname .5s ease-in;
+	top: 0;
+	font-size: 22px;
+}
+
+@keyframes grow {
+	0% {
+		transform: scale(1) translateY(0);
+	}
+	100% {
+		transform: scale(2) translateY(-15px);
+	}
+}
+
+@keyframes growname {
+	0% {
+		top: 0;
+		font-size: 22px;
+	}
+	100% {
+		top: -70px;
+		font-size: 34px;
+	}
+}
+
+@keyframes growshadow {
+	0% {
+		transform: scale(1) translateY(0);
+	}
+	100% {
+		transform: scale(2) translateY(-3px);
+	}
+}
+
+@keyframes ungrow {
+	0% {
+		transform: scale(2) translateY(-15px);
+	}
+	50% {
+		transform: scale(1) translateY(-30px);
+	}
+	100% {
+		transform: scale(1) translateY(0);
+	}
+}
+
+@keyframes ungrowname {
+	0% {
+		top: -70px;
+		font-size: 34px;
+	}
+	100% {
+		top: 0;
+		font-size: 22px;
+	}
+}

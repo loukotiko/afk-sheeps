@@ -1,0 +1,44 @@
+:root {
+	--background-image: url(../images/background.png);
+	--border-h-image: url(../images/border-h.png);
+	--border-v-image: url(../images/border-v.png);
+	--post-image: url(../images/post.png);
+	--hole-image: url(../images/hole.png);
+	--grow-flag-image: url(../images/grow.png);
+	--sheep-image: url(../images/sheep.png);
+	--sheep-jumping-image: url(../images/sheep-j.png);
+}
+
+maze cell paths {
+	--path-l: url(../images/paths/path-l.png);
+	--path-r: url(../images/paths/path-r.png);
+	--path-t: url(../images/paths/path-t.png);
+	--path-b: url(../images/paths/path-b.png);
+
+	--path-lr: url(../images/paths/path-lr.png);
+	--path-tb: url(../images/paths/path-tb.png);
+
+	--path-lt: url(../images/paths/path-lt.png);
+	--path-tr: url(../images/paths/path-tr.png);
+	--path-rb: url(../images/paths/path-rb.png);
+	--path-lb: url(../images/paths/path-lb.png);
+
+	--path-ltr: url(../images/paths/path-ltr.png);
+	--path-trb: url(../images/paths/path-trb.png);
+	--path-lrb: url(../images/paths/path-lrb.png);
+	--path-ltb: url(../images/paths/path-ltb.png);
+
+	--path-ltrb: url(../images/paths/path-ltrb.png);
+}
+
+maze cell.external paths {
+	--path-lt: url(../images/paths/path-lt-x.png);
+	--path-tr: url(../images/paths/path-tr-x.png);
+	--path-rb: url(../images/paths/path-rb-x.png);
+	--path-lb: url(../images/paths/path-lb-x.png);
+
+	--path-ltr: url(../images/paths/path-ltr-x.png);
+	--path-trb: url(../images/paths/path-trb-x.png);
+	--path-lrb: url(../images/paths/path-lrb-x.png);
+	--path-ltb: url(../images/paths/path-ltb-x.png);
+}
