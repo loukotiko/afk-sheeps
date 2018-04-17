@@ -1,0 +1,10 @@
+maze flag {
+	display: block;
+	position: absolute;
+	width: var(--cell-size);
+	height: var(--cell-size);
+	box-sizing: border-box;
+	border-radius: 0%;
+	text-align: center;
+	z-index: 2;
+}

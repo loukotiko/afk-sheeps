@@ -1,0 +1,45 @@
+found {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%) scale(0.5);
+	font-size: 60px;
+	color: #fff;
+	background: rgba(0, 0, 0, .2);
+	border-radius: 60px;
+	animation: fadeinout 3s;
+	opacity: 0;
+	white-space: nowrap;
+}
+
+found name {
+    color: var(--player-color);
+    text-shadow: 2px 2px 0 var(--contrast-color),
+    			 2px -2px 0 var(--contrast-color),
+    			 -2px 2px 0 var(--contrast-color),
+    			 -2px -2px 0 var(--contrast-color),
+    			 0 -2px 0 var(--contrast-color),
+    			 0 2px 0 var(--contrast-color);				
+}
+
+@keyframes fadeinout {
+	0% {
+		transform: translate(-50%, -50%) scale(0.5);
+		opacity: 0;
+	}
+	18% {
+		transform: translate(-50%, -50%) scale(1.1);
+	}
+	21% {
+		transform: translate(-50%, -50%) scale(1);
+		opacity: 1;
+	}
+	80% {
+		transform: translate(-50%, -50%) scale(1);
+		opacity: 1;
+	}
+	100% {
+		transform: translate(-50%, -50%) scale(0.5);
+		opacity: 0;
+	}
+}

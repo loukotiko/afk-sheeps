@@ -1,0 +1,83 @@
+maze player.jump sheep {
+	background-image: var(--sheep-jumping-image);
+}
+
+maze player.jump.right {
+	animation: jumphorizontal .5s linear;
+	transform: scaleX(var(--h-dir)) translate(-100%, 0);
+}
+
+maze player.jump.left {
+	animation: jumphorizontal .5s linear;
+	transform: scaleX(var(--h-dir)) translate(-100%, 0);
+}
+
+maze player.jump.up {
+	animation: jumpup .5s linear;
+	transform: scaleX(var(--h-dir)) translate(0, -100%);
+}
+
+maze player.jump.down {
+	animation: jumpdown .5s linear;
+	transform: scaleX(var(--h-dir)) translate(0, 100%);
+}
+
+maze player.jump shadow {
+	animation: jumpshadow .5s linear;
+}
+
+@keyframes jumphorizontal {
+	0% {
+		transform: scaleX(var(--h-dir));
+	}
+	33% {
+		transform: scaleX(var(--h-dir)) translate(-33%, -35%);
+	}
+	50% {
+		transform: scaleX(var(--h-dir)) translate(-50%, -40%);
+	}
+	66% {
+		transform: scaleX(var(--h-dir)) translate(-66%, -35%);
+	}
+	100% {
+		transform: scaleX(var(--h-dir)) translate(-100%, 0);
+	}
+}
+
+@keyframes jumpup {
+	0% {
+		transform: scaleX(var(--h-dir));
+	}
+	60% {
+		transform: scaleX(var(--h-dir)) translate(0, -110%);
+	}
+	100% {
+		transform: scaleX(var(--h-dir)) translate(0, -100%);
+	}
+}
+
+@keyframes jumpdown {
+	0% {
+		transform: scaleX(var(--h-dir));
+	}
+	33% {
+		transform: scaleX(var(--h-dir)) translate(0, -10%);
+	}
+	100% {
+		transform: scaleX(var(--h-dir)) translate(0, 100%);
+	}
+}
+
+@keyframes jumpshadow {
+	0% {
+		transform: translateY(0);
+	}
+	50% {
+		transform: translateY(40px);
+    	filter: blur(8px);
+   		opacity: .3;
+	}
+	100% {
+		transform: translateY(0);
+	}
+}

@@ -1,0 +1,93 @@
+maze player {
+	display: block;
+	position: absolute;
+	width: var(--cell-size);
+	height: var(--cell-size);
+	box-sizing: border-box;
+	border-radius: 0%;
+	text-align: center;
+    z-index: var(--z-player);
+
+    --h-dir: 1;
+    transform: scaleX(var(--h-dir));
+
+    --not-falling: 1;
+}
+
+maze player name {
+    color: var(--player-color);
+    text-shadow: 2px 2px 0 var(--contrast-color),
+    			 2px -2px 0 var(--contrast-color),
+    			 -2px 2px 0 var(--contrast-color),
+    			 -2px -2px 0 var(--contrast-color),
+    			 0 -2px 0 var(--contrast-color),
+    			 0 2px 0 var(--contrast-color);
+	display: inline-block;
+    font-size: 22px;
+    line-height: 22px;
+    height: 22px;
+	z-index: 1;
+	position: absolute;
+	top: 0;
+    left: 50%;
+	margin-left: -250px;
+	width: 500px;
+	opacity: 1;
+	transition: opacity .2s;
+}
+
+maze player name:empty {
+	display: none;
+}
+
+maze player sheep {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: var(--cell-size);
+	height: var(--cell-size);
+
+	background-image: var(--sheep-image);
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+maze player sheep::after {
+	content: '';
+    width: 10px;
+    height: 10px;
+    display: block;
+    border-radius: 100%;
+    position: absolute;
+    top: 29px;
+    left: 29px;
+    background: var(--player-color);
+    box-shadow: -6px 3px 0 -1px var(--player-color),
+    			7px 1px 0px var(--player-color),
+    			9px 6px 0px var(--player-color),
+    			3px 9px 0px -1px var(--player-color),
+    			-4px 8px 0px var(--player-color),
+    			2px 4px 0px 3px var(--player-color);
+    transition: background .4s, box-shadow .4s;
+}
+
+maze player shadow {
+    position: absolute;
+    bottom: 21px;
+    height: 10%;
+    left: 29px;
+    right: 26px;
+    background: #000;
+    filter: blur(4px);
+    opacity: .5;
+    border-radius: 100%;
+}
+
+maze player.face-right {
+    --h-dir: -1;
+}
+
+maze player.face-right name {
+    transform: scaleX(-1);
+}

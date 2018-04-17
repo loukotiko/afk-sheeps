@@ -1,0 +1,18 @@
+maze player.walk {
+	transition: top var(--distance-y) linear, left var(--distance-x) var(--distance-y) linear;
+	animation: walk .1s infinite alternate;
+	z-index: var(--z-player-walking);
+}
+
+maze player.walk name {
+	opacity: 0;
+}
+
+@keyframes walk {
+	0% {
+		transform: scaleX(var(--h-dir)) translateY(0%);
+	}
+	100% {
+		transform: scaleX(var(--h-dir)) translateY(7%);
+	}
+}
