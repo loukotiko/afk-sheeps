@@ -25,10 +25,47 @@
 				--right: calc(var(--cell-size));
 				--bottom: calc(var(--cell-size));
 
-				--border-h: url(border-h.png);
-				--border-v: url(border-v.png);
-				--post: url(post.png);
-				--hole: url(hole.png);
+				--background-image: url(assets/images/background.png);
+				--border-h-image: url(assets/images/border-h.png);
+				--border-v-image: url(assets/images/border-v.png);
+				--post-image: url(assets/images/post.png);
+				--hole-image: url(assets/images/hole.png);
+				--sheep-image: url(assets/images/sheep.png);
+				--sheep-jumping-image: url(assets/images/sheep-j.png);
+			}
+
+			maze cell paths {
+				--path-l: url(assets/images/paths/path-l.png);
+				--path-r: url(assets/images/paths/path-r.png);
+				--path-t: url(assets/images/paths/path-t.png);
+				--path-b: url(assets/images/paths/path-b.png);
+
+				--path-lr: url(assets/images/paths/path-lr.png);
+				--path-tb: url(assets/images/paths/path-tb.png);
+
+				--path-lt: url(assets/images/paths/path-lt.png);
+				--path-tr: url(assets/images/paths/path-tr.png);
+				--path-rb: url(assets/images/paths/path-rb.png);
+				--path-lb: url(assets/images/paths/path-lb.png);
+
+				--path-ltr: url(assets/images/paths/path-ltr.png);
+				--path-trb: url(assets/images/paths/path-trb.png);
+				--path-lrb: url(assets/images/paths/path-lrb.png);
+				--path-ltb: url(assets/images/paths/path-ltb.png);
+
+				--path-ltrb: url(assets/images/paths/path-ltrb.png);
+			}
+
+			maze cell.external paths {
+				--path-lt: url(assets/images/paths/path-lt-x.png);
+				--path-tr: url(assets/images/paths/path-tr-x.png);
+				--path-rb: url(assets/images/paths/path-rb-x.png);
+				--path-lb: url(assets/images/paths/path-lb-x.png);
+
+				--path-ltr: url(assets/images/paths/path-ltr-x.png);
+				--path-trb: url(assets/images/paths/path-trb-x.png);
+				--path-lrb: url(assets/images/paths/path-lrb-x.png);
+				--path-ltb: url(assets/images/paths/path-ltb-x.png);
 			}
 
 			body {
@@ -43,7 +80,7 @@
 				left: 0;
 				right: 0;
 				bottom: 0;
-				background: url(background.png) no-repeat center center;
+				background: var(--background-image) no-repeat center center;
 				background-size: var(--width) var(--height);
 				pointer-events: none;
 				z-index: 0;
@@ -55,7 +92,7 @@
 				height: calc(var(--cell-size) * (var(--grid-size) + 1));
 				padding-left: calc(var(--cell-size) / 2);
 				padding-top: calc(var(--cell-size) / 2);
-				background-image: var(--post);
+				background-image: var(--post-image);
 				background-repeat: repeat;
 				box-sizing: border-box;
 				position: absolute;
@@ -132,13 +169,13 @@
 				width: var(--cell-size);
 				height: var(--cell-size);
 
-				background-image: url(sheep.png);
+				background-image: var(--sheep-image);
 				background-repeat: no-repeat;
 				background-size: cover;
 			}
 
 			maze player.jump sheep {
-				background-image: url(sheep-j.png);
+				background-image: var(--sheep-jumping-image);
 			}
 
 			maze player sheep::after {
@@ -290,7 +327,7 @@
 
 	/** FALL **/
 			maze flag[class*="hole-"] {
-				background: var(--hole) no-repeat;
+				background: var(--hole-image) no-repeat;
 			}
 
 			maze player.fall, maze player.unfall {
@@ -348,7 +385,7 @@
 	/** GROW **/
 
 			maze flag.grow {
-				background: url(grow.png) no-repeat;
+				background: var(--grow-flag-image) no-repeat;
 			}
 
 			maze player.grow sheep {
@@ -433,16 +470,6 @@
 				}
 			}
 
-
-
-
-
-			maze cell {
-				--border-h: url(border-h.png);
-				--border-v: url(border-v.png);
-				--angle: url(angle.png);
-			}
-
 			maze cell paths, maze cell borders {
 				content: '';
 				display: block;
@@ -486,143 +513,109 @@
 
 			maze cell.allow-left borders {
 				background:
-						var(--border-v) no-repeat var(--left) var(--top)
+						var(--border-v-image) no-repeat var(--left) var(--top)
 						;
 			}
 
 			maze cell.allow-right borders {
 				background:
-						var(--border-v) no-repeat var(--right) var(--top)
+						var(--border-v-image) no-repeat var(--right) var(--top)
 						;
 			}
 
 			maze cell.allow-top borders {
 				background:
-						var(--border-h) no-repeat var(--left) var(--top)
+						var(--border-h-image) no-repeat var(--left) var(--top)
 						;
 			}
 
 			maze cell.allow-bottom borders {
 				background:
-						var(--border-h) no-repeat var(--left) var(--bottom)
+						var(--border-h-image) no-repeat var(--left) var(--bottom)
 						;
 			}
 
 			maze cell.allow-left.allow-bottom borders {
 				background:
-						var(--border-h) no-repeat var(--left) var(--bottom),
-						var(--border-v) no-repeat var(--left) var(--top)
+						var(--border-h-image) no-repeat var(--left) var(--bottom),
+						var(--border-v-image) no-repeat var(--left) var(--top)
 						;
 			}
 
 			maze cell.allow-left.allow-right borders {
 				background:
-						var(--border-v) no-repeat var(--left) var(--top),
-						var(--border-v) no-repeat var(--right) var(--top)
+						var(--border-v-image) no-repeat var(--left) var(--top),
+						var(--border-v-image) no-repeat var(--right) var(--top)
 						;
 			}
 
 			maze cell.allow-left.allow-top borders {
 				background:
-						var(--border-v) no-repeat var(--left) var(--top),
-						var(--border-h) no-repeat var(--left) var(--top)
+						var(--border-v-image) no-repeat var(--left) var(--top),
+						var(--border-h-image) no-repeat var(--left) var(--top)
 						;
 			}
 
 			maze cell.allow-right.allow-bottom borders {
 				background:
-						var(--border-h) no-repeat var(--left) var(--bottom),
-						var(--border-v) no-repeat var(--right) var(--top)
+						var(--border-h-image) no-repeat var(--left) var(--bottom),
+						var(--border-v-image) no-repeat var(--right) var(--top)
 						;
 			}
 
 			maze cell.allow-right.allow-top borders {
 				background:
-						var(--border-v) no-repeat var(--right) var(--top),
-						var(--border-h) no-repeat var(--left) var(--top)
+						var(--border-v-image) no-repeat var(--right) var(--top),
+						var(--border-h-image) no-repeat var(--left) var(--top)
 						;
 			}
 
 			maze cell.allow-top.allow-bottom borders {
 				background:
-						var(--border-h) no-repeat var(--left) var(--top),
-						var(--border-h) no-repeat var(--left) var(--bottom)
+						var(--border-h-image) no-repeat var(--left) var(--top),
+						var(--border-h-image) no-repeat var(--left) var(--bottom)
 						;
 			}
 
 			maze cell.allow-left.allow-right.allow-top borders {
 				background:
-						var(--border-v) no-repeat var(--right) var(--top),
-						var(--border-v) no-repeat var(--left) var(--top),
-						var(--border-h) no-repeat var(--left) var(--top)
+						var(--border-v-image) no-repeat var(--right) var(--top),
+						var(--border-v-image) no-repeat var(--left) var(--top),
+						var(--border-h-image) no-repeat var(--left) var(--top)
 						;
 			}
 
 			maze cell.allow-left.allow-top.allow-bottom borders {
 				background:
-						var(--border-h) no-repeat var(--left) var(--bottom),
-						var(--border-v) no-repeat var(--left) var(--top),
-						var(--border-h) no-repeat var(--left) var(--top)
+						var(--border-h-image) no-repeat var(--left) var(--bottom),
+						var(--border-v-image) no-repeat var(--left) var(--top),
+						var(--border-h-image) no-repeat var(--left) var(--top)
 						;
 			}
 
 			maze cell.allow-right.allow-top.allow-bottom borders {
 				background:
-						var(--border-h) no-repeat var(--left) var(--bottom),
-						var(--border-v) no-repeat var(--right) var(--top),
-						var(--border-h) no-repeat var(--left) var(--top)
+						var(--border-h-image) no-repeat var(--left) var(--bottom),
+						var(--border-v-image) no-repeat var(--right) var(--top),
+						var(--border-h-image) no-repeat var(--left) var(--top)
 						;
 			}
 
 			maze cell.allow-left.allow-right.allow-bottom borders {
 				background:
-						var(--border-h) no-repeat var(--left) var(--bottom),
-						var(--border-v) no-repeat var(--left) var(--top),
-						var(--border-v) no-repeat var(--right) var(--top)
+						var(--border-h-image) no-repeat var(--left) var(--bottom),
+						var(--border-v-image) no-repeat var(--left) var(--top),
+						var(--border-v-image) no-repeat var(--right) var(--top)
 						;
 			}
 
 			maze cell.allow-left.allow-right.allow-top.allow-bottom borders {
 				background:
-						var(--border-h) no-repeat var(--left) var(--bottom),
-						var(--border-v) no-repeat var(--left) var(--top),
-						var(--border-v) no-repeat var(--right) var(--top),
-						var(--border-h) no-repeat var(--left) var(--top)
+						var(--border-h-image) no-repeat var(--left) var(--bottom),
+						var(--border-v-image) no-repeat var(--left) var(--top),
+						var(--border-v-image) no-repeat var(--right) var(--top),
+						var(--border-h-image) no-repeat var(--left) var(--top)
 						;
-			}
-
-			maze cell paths {
-				--path-l: url(path-l.png);
-				--path-r: url(path-r.png);
-				--path-t: url(path-t.png);
-				--path-b: url(path-b.png);
-
-				--path-lr: url(path-lr.png);
-				--path-tb: url(path-tb.png);
-
-				--path-lt: url(path-lt.png);
-				--path-tr: url(path-tr.png);
-				--path-rb: url(path-rb.png);
-				--path-lb: url(path-lb.png);
-
-				--path-ltr: url(path-ltr.png);
-				--path-trb: url(path-trb.png);
-				--path-lrb: url(path-lrb.png);
-				--path-ltb: url(path-ltb.png);
-
-				--path-ltrb: url(path-ltrb.png);
-			}
-
-			maze cell.external paths {
-				--path-lt: url(path-lt-x.png);
-				--path-tr: url(path-tr-x.png);
-				--path-rb: url(path-rb-x.png);
-				--path-lb: url(path-lb-x.png);
-
-				--path-ltr: url(path-ltr-x.png);
-				--path-trb: url(path-trb-x.png);
-				--path-lrb: url(path-lrb-x.png);
-				--path-ltb: url(path-ltb-x.png);
 			}
 
 			/* paths */
