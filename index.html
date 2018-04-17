@@ -488,6 +488,7 @@
 					foundElement.style.setProperty('--contrast-color', idealTextColor(player.color));
 					foundElement.innerHTML = '<name>' + (player.tags['display-name'] || 'Un mouton') + '</name> a trouvé le mouton avec la cloche !';
 					document.body.appendChild(foundElement);
+					mazeElement.classList.add('blur');
 
 					after(3000, _ => {
 						document.body.removeChild(foundElement);
@@ -496,9 +497,11 @@
 					// Retirer les barrières
 					mazeElement.querySelectorAll('cell:not(.external)').forEach(flag => flag.className = '');
 					Object.values(players).forEach(player => player.animating = false);
-					after(1000, _ => {
+					after(2000, _ => {
 						clearAllAnimations();
 						let maxTime = 0;
+
+						mazeElement.classList.remove('blur');
 
 						// Replacer les moutons et les joueurs
 						Object.values(players).forEach(pl => {
@@ -573,6 +576,7 @@
 						});
 
 						after(Math.max(1000, maxTime), _ => {
+
 							// Remettre les barrières
 							initMaze();
 
