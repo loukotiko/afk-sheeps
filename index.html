@@ -30,7 +30,11 @@
 				fall: _ => new Audio('assets/sounds/sheep_fall.wav'),
 				unfall: _ => new Audio('assets/sounds/sheep_unfall.wav'),
 				walk: _ => new Audio('assets/sounds/sheep_walk.wav'),
-				jump: _ => new Audio('assets/sounds/sheep_jump.wav')
+				jump: _ => new Audio('assets/sounds/sheep_jump.wav'),
+				songs: [
+					new Audio('assets/sounds/song_1.wav'),
+					new Audio('assets/sounds/song_2.wav')
+				]
 			}
 
 			// Pour trouver les ids, regarder les requêtes envoyées depuis twitch (requete http)
@@ -345,6 +349,10 @@
 						player.element.classList.add(direction);
 						player.element.classList.add('walk');
 
+						let walk = audios.walk();
+						walk.loop = true;
+						walk.play();
+
 						after(1, _ => {
 							player.x = playerPosition[0];
 							player.y = playerPosition[1];
@@ -355,6 +363,7 @@
 							player.animating = false;
 							player.element.classList.remove(direction);
 							player.element.classList.remove('walk');
+							walk.pause();
 						});
 					}
 
@@ -452,10 +461,6 @@
 
 						// Replacer les moutons et les joueurs
 						Object.values(players).forEach(pl => {
-							pl.element.classList.add('walk');
-							let walk = audios.walk();
-							walk.loop = true;
-							walk.play();
 
 							if(pl.grown) {
 								pl.grown = false;
@@ -497,6 +502,8 @@
 								}
 							}
 
+							pl.element.classList.add('walk');
+
 							let distanceX = Math.abs(pl.x - backToPosition[0]);
 							let distanceY = Math.abs(pl.y - backToPosition[1]);
 
@@ -510,10 +517,16 @@
 
 							updatePlayer(pl);
 
+							let walk = audios.walk();
+							walk.loop = true;
+
 							let time = (distanceX + distanceY) * 1000;
 							maxTime = Math.max(maxTime, time);
+
+							if(time) walk.play();
+
 							after(time, _ => {
-								pl.element.classList.remove('walk')
+								pl.element.classList.remove('walk');
 								walk.pause();
 							});
 						});
@@ -686,6 +699,32 @@
 			};
 
 			createMaze();
+
+			let playRandomSong = previousSongId => {
+				let songId = previousSongId;
+				while(previousSongId == songId) {
+					songId = random(audios.songs.length);
+				}
+
+				let song = audios.songs[songId];
+
+				if(song.readyState >= 2) playSong(songId);
+				else song.addEventListener('loadeddata', _ => {
+					if(song.readyState >= 2) playSong(songId);
+				});
+			}
+
+			let playSong = songId => {
+				let song = audios.songs[songId];
+				
+			    song.play();
+
+				after(song.duration * 1000 + 10000, _ => {
+					playRandomSong(songId);
+				});
+			};
+
+			playRandomSong();
 
 		</script>
 	</body>
