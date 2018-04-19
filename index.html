@@ -320,19 +320,22 @@
 
 					player.audio = audios.beee(random(2, 8));
 
-					let beee = _ => {
-						after(random(2000, 10000), _ => {
-							player.audio.play();
-							beee();
-						});
-					};
-					beee();
 
 					if(player.npc) {
 						player.animating = false;
 						player.x = centerPosition[0];
 						player.y = centerPosition[1];
 						updatePlayer(player);
+
+						let beee = _ => {
+							after(random(10000, 30000), _ => {
+								player.audio.play();
+								beee();
+							});
+						};
+
+						beee();
+
 					} else {
 						let playerPosition = randomPosition();
 						let fromPosition = [...playerPosition];
@@ -704,6 +707,7 @@
 					            	else if(['q', 'k', '4'].indexOf(msg) != -1) goDirection(players[parsed.username], LEFT);
 					            	else if(['z', 'o', '8'].indexOf(msg) != -1) goDirection(players[parsed.username], UP);
 					            	else if(['s', 'l', '5'].indexOf(msg) != -1) goDirection(players[parsed.username], DOWN);
+					            	else players[parsed.username].audio.play();
 					            }
 
 				        		webSocket.send('PRIVMSG test');
