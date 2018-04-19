@@ -26,19 +26,25 @@
 		</maze>
 		<background></background>
 		<script>
+			let sound = (name, volume = 1) => {
+				let audio = new Audio('assets/sounds/' + name + '.wav');
+				audio.volume = volume;
+				return audio;
+			};
+
 			let audios = {
-				fall: _ => new Audio('assets/sounds/sheep_fall.wav'),
-				unfall: _ => new Audio('assets/sounds/sheep_unfall.wav'),
-				grow: _ => new Audio('assets/sounds/sheep_grow.wav'),
-				ungrow: _ => new Audio('assets/sounds/sheep_ungrow.wav'),
-				walk: new Audio('assets/sounds/sheep_walk.wav'),
-				playerwalk: _ => new Audio('assets/sounds/player_walk.wav'),
-				jump: _ => new Audio('assets/sounds/sheep_jump.wav'),
-				win: _ => new Audio('assets/sounds/sheep_win.wav'),
-				beee: n => new Audio('assets/sounds/sheep_beee' + n + '.wav'),
+				fall: _ => sound('sheep_fall', .5),
+				unfall: _ => sound('sheep_unfall', .5),
+				grow: _ => sound('sheep_grow', .3),
+				ungrow: _ => sound('sheep_ungrow', .5),
+				walk: sound('sheep_walk', .5),
+				playerwalk: _ => sound('player_walk', .5),
+				jump: _ => sound('sheep_jump', .5),
+				win: _ => sound('sheep_win'),
+				beee: n => sound('sheep_beee' + n, .5),
 				songs: [
-					new Audio('assets/sounds/song_1.wav'),
-					new Audio('assets/sounds/song_2.wav')
+					sound('song_1'),
+					sound('song_2')
 				]
 			};
 
@@ -750,10 +756,8 @@
 
 				let song = audios.songs[songId];
 
-				if(song.readyState >= 2) playSong(songId);
-				else song.addEventListener('loadeddata', _ => {
-					if(song.readyState >= 2) playSong(songId);
-				});
+				if(song.readyState >= 4) playSong(songId);
+				else after(1000, playRandomSong);
 			}
 
 			playRandomSong();
