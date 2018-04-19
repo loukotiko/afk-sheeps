@@ -29,6 +29,8 @@
 			let audios = {
 				fall: _ => new Audio('assets/sounds/sheep_fall.wav'),
 				unfall: _ => new Audio('assets/sounds/sheep_unfall.wav'),
+				grow: _ => new Audio('assets/sounds/sheep_grow.wav'),
+				ungrow: _ => new Audio('assets/sounds/sheep_ungrow.wav'),
 				walk: new Audio('assets/sounds/sheep_walk.wav'),
 				playerwalk: _ => new Audio('assets/sounds/player_walk.wav'),
 				jump: _ => new Audio('assets/sounds/sheep_jump.wav'),
@@ -637,6 +639,7 @@
 							player.grown = false;
 							player.element.classList.remove('grow');
 							player.element.classList.add('ungrow');
+							audios.ungrow().play();
 
 							after(500, _ => {
 								player.element.classList.remove('ungrow');
@@ -645,6 +648,7 @@
 							player.grown = true;
 							player.element.classList.remove('ungrow');
 							player.element.classList.add('grow');
+							audios.grow().play();
 						}
 
 						after(500, _ => player.animating = false);
