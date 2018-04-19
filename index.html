@@ -26,6 +26,13 @@
 		</maze>
 		<background></background>
 		<script>
+			let audios = {
+				fall: _ => new Audio('assets/sounds/sheep_fall.wav'),
+				unfall: _ => new Audio('assets/sounds/sheep_unfall.wav'),
+				walk: _ => new Audio('assets/sounds/sheep_walk.wav'),
+				jump: _ => new Audio('assets/sounds/sheep_jump.wav')
+			}
+
 			// Pour trouver les ids, regarder les requêtes envoyées depuis twitch (requete http)
 			let loukodilChannelId = '144500698';
 			let moutonRoomId = 'e35e5eb8-21ca-4d16-8c69-ab65fdf157bc';
@@ -409,6 +416,7 @@
 					if(direction == 'down') player.y += 1;
 
 					player.element.classList.add('jump');
+					audios.jump().play();
 
 					/* wait animation */
 					after(500, _ => stopJump(player, direction))
@@ -445,6 +453,9 @@
 						// Replacer les moutons et les joueurs
 						Object.values(players).forEach(pl => {
 							pl.element.classList.add('walk');
+							let walk = audios.walk();
+							walk.loop = true;
+							walk.play();
 
 							if(pl.grown) {
 								pl.grown = false;
@@ -501,7 +512,10 @@
 
 							let time = (distanceX + distanceY) * 1000;
 							maxTime = Math.max(maxTime, time);
-							after(time, _ => pl.element.classList.remove('walk'));
+							after(time, _ => {
+								pl.element.classList.remove('walk')
+								walk.pause();
+							});
 						});
 
 						after(Math.max(1000, maxTime), _ => {
@@ -543,6 +557,7 @@
 						let playerOnHole = Array.from(Array(nbOfHoles)).map((_,i)=>i).find(i => playerOn(player, 'hole-'+i));
 						if(playerOnHole !== undefined && !player.grown) {
 							player.element.classList.add('fall');
+							audios.fall().play();
 
 							let randomHoleFlag = flags['hole-' + random(nbOfHoles)];
 							let playerHoleFlag = flags['hole-' + playerOnHole];
@@ -558,6 +573,7 @@
 
 								player.element.classList.remove('fall');
 								player.element.classList.add('unfall');
+								audios.unfall().play();
 
 								after(500, _ => {
 									player.element.classList.remove('unfall');
