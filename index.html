@@ -32,6 +32,7 @@
 				walk: _ => new Audio('assets/sounds/sheep_walk.wav'),
 				playerwalk: _ => new Audio('assets/sounds/player_walk.wav'),
 				jump: _ => new Audio('assets/sounds/sheep_jump.wav'),
+				win: _ => new Audio('assets/sounds/sheep_win.wav'),
 				songs: [
 					new Audio('assets/sounds/song_1.wav'),
 					new Audio('assets/sounds/song_2.wav')
@@ -430,10 +431,10 @@
 					if(direction == 'down') player.y += 1;
 
 					player.element.classList.add('jump');
-					audios.jump().play();
 
 					/* wait animation */
-					after(500, _ => stopJump(player, direction))
+					after(500, _ => stopJump(player, direction));
+					after(300, _ => audios.jump().play());
 				};
 
 				let stopJump = (player, direction) => {
@@ -446,6 +447,8 @@
 				let ended = false;
 				let endGame = player => {
 					ended = true;
+
+					audios.win().play();
 					// Afficher le texte
 					let foundElement = document.createElement('found');
 					foundElement.style.setProperty('--player-color', player.color);
