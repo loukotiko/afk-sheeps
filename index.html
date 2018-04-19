@@ -29,15 +29,27 @@
 			let audios = {
 				fall: _ => new Audio('assets/sounds/sheep_fall.wav'),
 				unfall: _ => new Audio('assets/sounds/sheep_unfall.wav'),
-				walk: _ => new Audio('assets/sounds/sheep_walk.wav'),
+				walk: new Audio('assets/sounds/sheep_walk.wav'),
 				playerwalk: _ => new Audio('assets/sounds/player_walk.wav'),
 				jump: _ => new Audio('assets/sounds/sheep_jump.wav'),
 				win: _ => new Audio('assets/sounds/sheep_win.wav'),
+				beee: n => new Audio('assets/sounds/sheep_beee' + n + '.wav'),
 				songs: [
 					new Audio('assets/sounds/song_1.wav'),
 					new Audio('assets/sounds/song_2.wav')
 				]
-			}
+			};
+
+			// loop without pause
+			audios.walk.addEventListener('timeupdate', function() {
+                var buffer = .50;
+                console.log(this.currentTime);
+                console.log(this.duration);
+                if(this.currentTime > this.duration - buffer && !this.paused) {
+                    this.currentTime = 0;
+                    this.play();
+                }
+           	}, false);
 
 			// Pour trouver les ids, regarder les requêtes envoyées depuis twitch (requete http)
 			let loukodilChannelId = '144500698';
@@ -306,6 +318,16 @@
 
 					mazeElement.appendChild(player.element);
 
+					player.audio = audios.beee(random(2, 8));
+
+					let beee = _ => {
+						after(random(2000, 10000), _ => {
+							player.audio.play();
+							beee();
+						});
+					};
+					beee();
+
 					if(player.npc) {
 						player.animating = false;
 						player.x = centerPosition[0];
@@ -525,20 +547,18 @@
 
 							updatePlayer(pl);
 
-							let walk = audios.walk();
-							walk.loop = true;
-
 							let time = (distanceX + distanceY) * 1000;
 							maxTime = Math.max(maxTime, time);
 
-							if(time) walk.play();
+							after(time, _ => pl.element.classList.remove('walk'));
+						});
 
-							after(time, _ => {
-								pl.element.classList.remove('walk');
-								after(300, _ => {
-									walk.pause();
-								});
-							});
+						let walk = audios.walk;
+
+						if(maxTime) walk.play();
+
+						after(maxTime + 200, _ => {
+							walk.pause();
 						});
 
 						after(Math.max(1000, maxTime), _ => {
@@ -699,11 +719,15 @@
 					let player = createPlayer({npc: true, end: i==0, tags: {'color': '#fffecc', 'display-name': ''}});
 					updatePlayer(player);
 					players[i] = player;
-					setInterval(_ => {
-						if(player != selectedPlayer) {
-							goDirection(player, random(37,  40));
-						}
-					}, random(2000, 10000));
+
+					let move = _ => {
+						after(random(2000, 10000), _ => {
+							if(player != selectedPlayer) goDirection(player, random(37,  40));
+							move();
+						});
+					};
+
+					move();
 			    });
 
 			};
@@ -724,6 +748,8 @@
 				});
 			}
 
+			playRandomSong();
+
 			let playSong = songId => {
 				let song = audios.songs[songId];
 				
@@ -733,9 +759,6 @@
 					playRandomSong(songId);
 				});
 			};
-
-			playRandomSong();
-
 		</script>
 	</body>
 </html>
