@@ -30,6 +30,7 @@
 				fall: _ => new Audio('assets/sounds/sheep_fall.wav'),
 				unfall: _ => new Audio('assets/sounds/sheep_unfall.wav'),
 				walk: _ => new Audio('assets/sounds/sheep_walk.wav'),
+				playerwalk: _ => new Audio('assets/sounds/player_walk.wav'),
 				jump: _ => new Audio('assets/sounds/sheep_jump.wav'),
 				songs: [
 					new Audio('assets/sounds/song_1.wav'),
@@ -324,8 +325,8 @@
 								player.element.classList.add('face-right');
 							} else {
 								direction = 'from-right';
-								playerPosition[0] = options.size-1;
-								fromPosition[0] = options.size+1;
+								playerPosition[0] = options.size - 1;
+								fromPosition[0] = options.size + 1;
 							}
 						} else {
 							player.element.style.setProperty('--distance-x', '0s');
@@ -336,8 +337,8 @@
 								fromPosition[1] = -2;
 							} else {
 								direction = 'from-bottom';
-								playerPosition[1] = options.size-1;
-								fromPosition[1] = options.size+1;
+								playerPosition[1] = options.size - 1;
+								fromPosition[1] = options.size + 1;
 							}
 						}
 						
@@ -349,11 +350,11 @@
 						player.element.classList.add(direction);
 						player.element.classList.add('walk');
 
-						let walk = audios.walk();
+						let walk = audios.playerwalk();
 						walk.loop = true;
 						walk.play();
 
-						after(1, _ => {
+						after(10, _ => {
 							player.x = playerPosition[0];
 							player.y = playerPosition[1];
 							updatePlayer(player);
@@ -363,8 +364,12 @@
 							player.animating = false;
 							player.element.classList.remove(direction);
 							player.element.classList.remove('walk');
-							walk.pause();
+							after(200, _ => {
+								walk.pause();
+							});
+
 						});
+
 					}
 
 					player.element.addEventListener('click', _ => {
@@ -491,13 +496,13 @@
 									if(r()) {
 										backToPosition[0] = 0
 									} else {
-										backToPosition[0] = options.size-1;
+										backToPosition[0] = options.size - 1;
 									}
 								} else {
 									if(r()) {
 										backToPosition[1] = 0
 									} else {
-										backToPosition[1] = options.size-1;
+										backToPosition[1] = options.size - 1;
 									}
 								}
 							}
@@ -527,7 +532,9 @@
 
 							after(time, _ => {
 								pl.element.classList.remove('walk');
-								walk.pause();
+								after(300, _ => {
+									walk.pause();
+								});
 							});
 						});
 

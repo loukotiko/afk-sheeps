@@ -10,9 +10,9 @@ maze player.walk name {
 
 @keyframes walk {
 	0% {
-		transform: scaleX(var(--h-dir)) translateY(0%);
+		transform: scaleX(var(--h-dir)) translateY(6%);
 	}
 	100% {
-		transform: scaleX(var(--h-dir)) translateY(7%);
+		transform: scaleX(var(--h-dir)) translateY(0%);
 	}
 }
