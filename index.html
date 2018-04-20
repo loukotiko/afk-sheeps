@@ -418,13 +418,13 @@
 					player.element.addEventListener('click', _ => {
 						if(selectedPlayer) {
 							selectedPlayer.color = selectedPlayer.originalColor;
-							updatePlayer(selectedPlayer);
+							updatePlayerColor(selectedPlayer);
 						}
 
 						if(selectedPlayer != player) {
 							selectedPlayer = player;
 							selectedPlayer.color = 'pink';
-							updatePlayer(selectedPlayer);
+							updatePlayerColor(selectedPlayer);
 						} else {
 							selectedPlayer = null;
 						}
@@ -754,10 +754,10 @@
 					players[i] = player;
 
 					let move = _ => {
-						after(random(2000, 10000), _ => {
+						setTimeout(_ => {
 							if(player != selectedPlayer) goDirection(player, random(37,  40));
 							move();
-						});
+						}, random(2000, 10000));
 					};
 
 					move();

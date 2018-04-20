@@ -17,6 +17,7 @@ found {
 	padding: 50px 50px;
 	text-align: center;
 	box-sizing: border-box;
+	pointer-events: none;
 }
 
 found name {
