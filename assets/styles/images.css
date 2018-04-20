@@ -1,5 +1,6 @@
 :root {
 	--background-image: url(../images/background.png);
+	--found-background-image: url(../images/background-found.png);
 	--border-h-image: url(../images/border-h.png);
 	--border-v-image: url(../images/border-v.png);
 	--post-image: url(../images/post.png);

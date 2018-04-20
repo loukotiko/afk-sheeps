@@ -3,23 +3,30 @@ found {
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%) scale(0.5);
-	font-size: 60px;
-	color: #fff;
-	background: rgba(0, 0, 0, .2);
-	border-radius: 60px;
-	animation: fadeinout 3s;
+	font-size: 40px;
+	color: #494137;
+	background: var(--found-background-image);
+	background-size: 600px;
+	background-position: center center;
+	background-repeat: no-repeat;
+	width: 600px;
+	height: 190px;
+	animation: fadeinout 2s;
+	text-transform: uppercase;
 	opacity: 0;
-	white-space: nowrap;
+	padding: 50px 50px;
+	text-align: center;
+	box-sizing: border-box;
 }
 
 found name {
     color: var(--player-color);
-    text-shadow: 2px 2px 0 var(--contrast-color),
+/*    text-shadow: 2px 2px 0 var(--contrast-color),
     			 2px -2px 0 var(--contrast-color),
     			 -2px 2px 0 var(--contrast-color),
     			 -2px -2px 0 var(--contrast-color),
     			 0 -2px 0 var(--contrast-color),
-    			 0 2px 0 var(--contrast-color);				
+    			 0 2px 0 var(--contrast-color); */
 }
 
 @keyframes fadeinout {
@@ -27,14 +34,14 @@ found name {
 		transform: translate(-50%, -50%) scale(0.5);
 		opacity: 0;
 	}
-	18% {
+	10% {
 		transform: translate(-50%, -50%) scale(1.1);
 	}
-	21% {
+	12% {
 		transform: translate(-50%, -50%) scale(1);
 		opacity: 1;
 	}
-	80% {
+	90% {
 		transform: translate(-50%, -50%) scale(1);
 		opacity: 1;
 	}
