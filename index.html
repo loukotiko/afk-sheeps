@@ -294,8 +294,17 @@
 					mazeElement.appendChild(flag);					
 				}
 
+				let deleteFlag = name => {
+					let flag = flags[name];
+					flag.element.classList.add('disappear');
+					after(500, _ => {
+						mazeElement.removeChild(flag.element);
+						delete flags[name];
+					});
+				}
+
 				let placeFlags = _ => {
-					nbOfHoles = random(2, 5);
+					nbOfHoles = random(3, 5);
 
 					mazeElement.querySelectorAll('flag').forEach(flag => mazeElement.removeChild(flag));
 
@@ -494,14 +503,19 @@
 						document.body.removeChild(foundElement);
 					});
 
-					// Retirer les barrières
-					mazeElement.querySelectorAll('cell:not(.external)').forEach(flag => flag.className = '');
 					Object.values(players).forEach(player => player.animating = false);
 					after(2000, _ => {
 						clearAllAnimations();
 						let maxTime = 0;
+						
+						// Retirer les barrières
+						mazeElement.querySelectorAll('cell:not(.external)').forEach(flag => flag.className = '');
 
 						mazeElement.classList.remove('blur');
+
+						Object.keys(flags).forEach((flagName, i) => {
+							after(i*100, _ => deleteFlag(flagName));
+						});
 
 						// Replacer les moutons et les joueurs
 						Object.values(players).forEach(pl => {
@@ -579,6 +593,7 @@
 
 							// Remettre les barrières
 							initMaze();
+							placeFlags();
 
 							after(1000, _ => {
 								ended = false;
