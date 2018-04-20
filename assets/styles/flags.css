@@ -7,4 +7,35 @@ maze flag {
 	border-radius: 0%;
 	text-align: center;
 	z-index: 2;
+
+	animation: appear .5s;
+}
+
+@keyframes appear {
+	0% {
+		transform: scale(0);
+	}
+	90% {
+		transform: scale(1.1);
+	}
+	100% {
+		transform: scale(1);
+	}
+}
+
+maze flag.disappear {
+	transform: scale(0);
+	animation: disappear .5s;
+}
+
+@keyframes disappear {
+	0% {
+		transform: scale(1);
+	}
+	10% {
+		transform: scale(1.1);
+	}
+	100% {
+		transform: scale(0);
+	}
 }
