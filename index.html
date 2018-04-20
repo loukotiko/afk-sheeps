@@ -495,7 +495,7 @@
 					let foundElement = document.createElement('found');
 					foundElement.style.setProperty('--player-color', player.color);
 					foundElement.style.setProperty('--contrast-color', idealTextColor(player.color));
-					foundElement.innerHTML = '<name>' + (player.tags['display-name'] || 'Un mouton') + '</name> a trouvé le mouton avec la cloche !';
+					foundElement.innerHTML = '<name>' + (player.tags['display-name'] || 'Un mouton') + '</name> a trouv&eacute; le mouton avec la cloche !';
 					document.body.appendChild(foundElement);
 					mazeElement.classList.add('blur');
 
@@ -507,7 +507,7 @@
 					after(2000, _ => {
 						clearAllAnimations();
 						let maxTime = 0;
-						
+
 						// Retirer les barrières
 						mazeElement.querySelectorAll('cell:not(.external)').forEach(flag => flag.className = '');
 
