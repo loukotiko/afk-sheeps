@@ -267,7 +267,7 @@
 					moves = [];
 
 					maze.forEach(line => line.forEach(cell => {
-						cell.allowLeft = cell.allowTop = cell.allowRight = cell.allowBottom = false
+						cell.allowLeft = cell.allowTop = cell.allowRight = cell.allowBottom = false;
 						setCell(cell);
 					}));
 
@@ -296,8 +296,17 @@
 					mazeElement.appendChild(flag);					
 				}
 
+		        let deleteFlag = name => { 
+		          	let flag = flags[name]; 
+		          	flag.element.classList.add('disappear'); 
+	          	 	delete flags[name];
+		          	after(500, _ => { 
+		          	 	mazeElement.removeChild(flag.element); 
+		          	}); 
+		        } 
+		 
 				let placeFlags = _ => {
-					nbOfHoles = random(2, 5);
+					nbOfHoles = random(3, 5);
 
 					mazeElement.querySelectorAll('flag').forEach(flag => mazeElement.removeChild(flag));
 
@@ -468,7 +477,7 @@
 					player.element.classList.add('jump');
 
 					/* wait animation */
-					after(500, _ => stopJump(player, direction));
+					after(600, _ => stopJump(player, direction));
 					after(300, _ => audios.jump().play());
 				};
 
@@ -497,7 +506,6 @@
 					});
 
 					// Retirer les barrières
-					mazeElement.querySelectorAll('cell:not(.external)').forEach(flag => flag.className = '');
 					Object.values(players).forEach(player => player.animating = false);
 
 					after(1800, _ => mazeElement.classList.remove('blur'));
@@ -505,11 +513,21 @@
 						clearAllAnimations();
 						let maxTime = 0;
 
+			            // Retirer les barrières 
+			            mazeElement.querySelectorAll('cell:not(.external)').forEach(cell => cell.className = ''); 
+			 
+			            mazeElement.classList.remove('blur'); 
+			 
+			            Object.keys(flags).forEach((flagName, i) => { 
+			              after(i*100, _ => deleteFlag(flagName)); 
+			            }); 
+			 
 						// Replacer les moutons et les joueurs
 						Object.values(players).forEach(pl => {
 
 							if(pl.grown) {
 								pl.grown = false;
+								pl.element.classList.remove('big');
 								pl.element.classList.remove('grow');
 								pl.element.classList.add('ungrow');
 
@@ -519,6 +537,7 @@
 							} else {
 								pl.element.classList.remove('grow');
 								pl.element.classList.remove('ungrow');
+								pl.element.classList.remove('big');
 							}
 
 							pl.element.classList.remove('fall');
@@ -577,10 +596,11 @@
 							walk.pause();
 						});
 
-						after(Math.max(500, maxTime), _ => {
+						after(Math.max(1000, maxTime + 500), _ => {
 
 							// Remettre les barrières
 							initMaze();
+              				placeFlags(); 
 
 							after(1000, _ => {
 								ended = false;
@@ -647,8 +667,12 @@
 					}
 
 					if(playerOn(player, 'grow')) {
+						deleteFlag('grow');
+						addFlag('grow');
+
 						if(player.grown) {
 							player.grown = false;
+							player.element.classList.remove('big');
 							player.element.classList.remove('grow');
 							player.element.classList.add('ungrow');
 							audios.ungrow().play();
@@ -660,7 +684,12 @@
 							player.grown = true;
 							player.element.classList.remove('ungrow');
 							player.element.classList.add('grow');
+							player.element.classList.add('big');
 							audios.grow().play();
+
+							after(500, _ => {
+								player.element.classList.remove('grow');
+							});
 						}
 
 						after(500, _ => player.animating = false);
@@ -741,10 +770,10 @@
 					players[i] = player;
 
 					let move = _ => {
-						after(random(2000, 10000), _ => {
+						setTimeout(_ => { 
 							if(player != selectedPlayer) goDirection(player, random(37,  40));
 							move();
-						});
+            			}, random(2000, 10000)); 
 					};
 
 					move();
