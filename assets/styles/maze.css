@@ -6,7 +6,7 @@
 	--grid-size: 7;
 
 	/** Layer orders **/
-	--z-overlay-above: 8;
+	--z-overlay-above: 50;
 	--z-player: 7;
 	--z-borders: 6;
 	--z-posts: 5;

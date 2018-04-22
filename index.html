@@ -53,8 +53,6 @@
 			// loop without pause
 			audios.walk.addEventListener('timeupdate', function() {
                 var buffer = .50;
-                console.log(this.currentTime);
-                console.log(this.duration);
                 if(this.currentTime > this.duration - buffer && !this.paused) {
                     this.currentTime = 0;
                     this.play();
@@ -475,6 +473,9 @@
 					if(direction == 'down') player.y += 1;
 
 					player.element.classList.add('jump');
+
+					if(direction == 'up') after(500, _ => player.element.style.setProperty('--z-player', player.y + 7));
+					else player.element.style.setProperty('--z-player', player.y + 7);
 
 					/* wait animation */
 					after(600, _ => stopJump(player, direction));
