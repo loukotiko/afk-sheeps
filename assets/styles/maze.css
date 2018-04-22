@@ -6,11 +6,13 @@
 	--grid-size: 7;
 
 	/** Layer orders **/
-	--z-player: 6;
-	--z-borders: 5;
-	--z-posts: 4;
-	--z-player-walking: 3;
-	--z-flags: 2;
+	--z-overlay-above: 50;
+	--z-player: 7;
+	--z-borders: 6;
+	--z-posts: 5;
+	--z-player-walking: 4;
+	--z-flags: 3;
+	--z-overlay-below: 2;
 	--z-paths: 1;
 	--z-background: 0;
 }
@@ -23,7 +25,6 @@ maze {
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	transition: filter 1s;
 }
 
 maze cell {
@@ -54,3 +55,28 @@ maze posts {
 maze.blur {
 	filter: blur(3px);
 }
+
+overlay {
+	position: absolute;
+	display: block;
+	width: var(--width);
+	height: var(--height);
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background-size: cover;
+	pointer-events: none;
+}
+
+overlay.below {
+	z-index: var(--z-overlay-below);
+	background-image: var(--overlay-below-image);
+	background-repeat: no-repeat;
+}
+
+overlay.above {
+	z-index: var(--z-overlay-above);	
+	background-image: var(--overlay-above-image);
+	background-repeat: no-repeat;
+}
+

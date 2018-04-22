@@ -5,18 +5,27 @@ maze flag.grow {
 maze player.grow sheep {
 	animation: grow .5s;
 	transform-origin: 50% 50%;
-	transform: scale(2) translateY(-15px);
 }
 
 maze player.grow name {
 	animation: growname .5s;
-	top: -70px;
-	font-size: 34px;
 }
 
 maze player.grow shadow {
 	animation: growshadow .5s;
 	transform-origin: 50% 50%;
+}
+
+maze player.big sheep {
+	transform: scale(2) translateY(-15px);
+}
+
+maze player.big name {
+	top: -70px;
+	font-size: 34px;
+}
+
+maze player.big shadow {
 	transform: scale(2) translateY(-3px);
 }
 
@@ -30,6 +39,10 @@ maze player.ungrow name {
 	animation: ungrowname .5s ease-in;
 	top: 0;
 	font-size: 22px;
+}
+
+maze player.big.jump shadow {
+	animation: jumpgrowshadow .5s linear;
 }
 
 @keyframes grow {
@@ -81,5 +94,18 @@ maze player.ungrow name {
 	100% {
 		top: 0;
 		font-size: 22px;
+	}
+}
+
+@keyframes jumpgrowshadow {
+	0% {
+		transform: translateY(0) scale(1);
+	}
+	50% {
+		transform: translateY(41px) scale(.5);
+   		opacity: 0;
+	}
+	100% {
+		transform: translateY(0) scale(1);
 	}
 }

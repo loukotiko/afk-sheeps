@@ -70,14 +70,13 @@ maze player.jump shadow {
 
 @keyframes jumpshadow {
 	0% {
-		transform: translateY(0);
+		transform: translateY(0) scale(1);
 	}
 	50% {
-		transform: translateY(40px);
-    	filter: blur(8px);
-   		opacity: .3;
+		transform: translateY(41px) scale(.5);
+   		opacity: 0;
 	}
 	100% {
-		transform: translateY(0);
+		transform: translateY(0) scale(1);
 	}
 }
