@@ -397,13 +397,13 @@
 						walk.loop = true;
 						walk.play();
 
-						after(10, _ => {
+						after(100, _ => {
 							player.x = playerPosition[0];
 							player.y = playerPosition[1];
 							updatePlayer(player);
 						});
 
-						after(1000, _ => {
+						after(1100, _ => {
 							player.animating = false;
 							player.element.classList.remove(direction);
 							player.element.classList.remove('walk');
@@ -498,7 +498,7 @@
 					let foundElement = document.createElement('found');
 					foundElement.style.setProperty('--player-color', player.color);
 					foundElement.style.setProperty('--contrast-color', idealTextColor(player.color));
-					foundElement.innerHTML = '<name>' + (player.tags['display-name'] || 'Un mouton') + '</name> a trouvé le mouton avec la cloche !';
+					foundElement.innerHTML = '<name>' + (player.tags['display-name'] || 'Un mouton') + '</name> a trouv&eacute; le mouton avec la cloche !';
 					document.body.appendChild(foundElement);
 					mazeElement.classList.add('blur');
 

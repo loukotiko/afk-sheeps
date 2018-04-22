@@ -21,13 +21,13 @@ found {
 }
 
 found name {
-    color: var(--player-color);
-/*    text-shadow: 2px 2px 0 var(--contrast-color),
+    color: var(--player-color);    
+    text-shadow: 2px 2px 0 var(--contrast-color),
     			 2px -2px 0 var(--contrast-color),
     			 -2px 2px 0 var(--contrast-color),
     			 -2px -2px 0 var(--contrast-color),
     			 0 -2px 0 var(--contrast-color),
-    			 0 2px 0 var(--contrast-color); */
+    			 0 2px 0 var(--contrast-color); 
 }
 
 @keyframes fadeinout {
