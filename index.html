@@ -345,10 +345,10 @@
 						updatePlayer(player);
 
 						let beee = _ => {
-							after(random(10000, 30000), _ => {
+							setTimeout(_ => {
 								player.audio.play();
 								beee();
-							});
+							}, random(10000, 30000));
 						};
 
 						beee();
@@ -793,7 +793,7 @@
 				let song = audios.songs[songId];
 
 				if(song.readyState >= 4) playSong(songId);
-				else after(1000, playRandomSong);
+				else setTimeout(playRandomSong, 1000);
 			}
 
 			playRandomSong();
@@ -803,9 +803,9 @@
 				
 			    song.play();
 
-				after(song.duration * 1000 + 10000, _ => {
+				setTimeout(_ => {
 					playRandomSong(songId);
-				});
+				}, song.duration * 1000 + 10000);
 			};
 		</script>
 	</body>
