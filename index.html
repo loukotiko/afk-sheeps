@@ -22,6 +22,8 @@
 	</head>
 	<body>
 		<maze>
+			<overlay class="below"></overlay>
+			<overlay class="above"></overlay>
 			<posts></posts>
 		</maze>
 		<background></background>
@@ -294,17 +296,8 @@
 					mazeElement.appendChild(flag);					
 				}
 
-				let deleteFlag = name => {
-					let flag = flags[name];
-					flag.element.classList.add('disappear');
-					after(500, _ => {
-						mazeElement.removeChild(flag.element);
-						delete flags[name];
-					});
-				}
-
 				let placeFlags = _ => {
-					nbOfHoles = random(3, 5);
+					nbOfHoles = random(2, 5);
 
 					mazeElement.querySelectorAll('flag').forEach(flag => mazeElement.removeChild(flag));
 
@@ -418,13 +411,13 @@
 					player.element.addEventListener('click', _ => {
 						if(selectedPlayer) {
 							selectedPlayer.color = selectedPlayer.originalColor;
-							updatePlayerColor(selectedPlayer);
+							updatePlayer(selectedPlayer);
 						}
 
 						if(selectedPlayer != player) {
 							selectedPlayer = player;
 							selectedPlayer.color = 'pink';
-							updatePlayerColor(selectedPlayer);
+							updatePlayer(selectedPlayer);
 						} else {
 							selectedPlayer = null;
 						}
@@ -495,7 +488,7 @@
 					let foundElement = document.createElement('found');
 					foundElement.style.setProperty('--player-color', player.color);
 					foundElement.style.setProperty('--contrast-color', idealTextColor(player.color));
-					foundElement.innerHTML = '<name>' + (player.tags['display-name'] || 'Un mouton') + '</name> a trouv&eacute; le mouton avec la cloche !';
+					foundElement.innerHTML = '<name>' + (player.tags['display-name'] || 'Un mouton') + '</name> a trouvé le mouton avec la cloche !';
 					document.body.appendChild(foundElement);
 					mazeElement.classList.add('blur');
 
@@ -503,19 +496,14 @@
 						document.body.removeChild(foundElement);
 					});
 
+					// Retirer les barrières
+					mazeElement.querySelectorAll('cell:not(.external)').forEach(flag => flag.className = '');
 					Object.values(players).forEach(player => player.animating = false);
+
+					after(1800, _ => mazeElement.classList.remove('blur'));
 					after(2000, _ => {
 						clearAllAnimations();
 						let maxTime = 0;
-
-						// Retirer les barrières
-						mazeElement.querySelectorAll('cell:not(.external)').forEach(flag => flag.className = '');
-
-						mazeElement.classList.remove('blur');
-
-						Object.keys(flags).forEach((flagName, i) => {
-							after(i*100, _ => deleteFlag(flagName));
-						});
 
 						// Replacer les moutons et les joueurs
 						Object.values(players).forEach(pl => {
@@ -589,11 +577,10 @@
 							walk.pause();
 						});
 
-						after(Math.max(1000, maxTime), _ => {
+						after(Math.max(500, maxTime), _ => {
 
 							// Remettre les barrières
 							initMaze();
-							placeFlags();
 
 							after(1000, _ => {
 								ended = false;
@@ -754,10 +741,10 @@
 					players[i] = player;
 
 					let move = _ => {
-						setTimeout(_ => {
+						after(random(2000, 10000), _ => {
 							if(player != selectedPlayer) goDirection(player, random(37,  40));
 							move();
-						}, random(2000, 10000));
+						});
 					};
 
 					move();
