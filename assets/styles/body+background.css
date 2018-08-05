@@ -1,7 +1,7 @@
 body {
-	background: #000;
 	overflow: hidden;
 	font-family: 'Lilita One', cursive;
+	animation: display .5s;
 }
 
 background {
@@ -14,4 +14,10 @@ background {
 	background-size: var(--width) var(--height);
 	pointer-events: none;
 	z-index: var(--z-background);
+}
+
+@keyframes display {
+	0% { opacity: 0; }
+	60% { opacity: 0; }
+	100% { opacity: 1; }
 }
